@@ -166,6 +166,15 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}&cidade={cidade_id}
     "sala": "101",
     "telefone": "(84) 3421-1234",
     "tempo_estimado_minutos": 30,
+    "vagas_por_dia": {
+      "vagas_seg": 20,
+      "vagas_ter": 15,
+      "vagas_qua": 25,
+      "vagas_qui": 20,
+      "vagas_sex": 18,
+      "vagas_sab": 10,
+      "vagas_dom": 0
+    },
     "limite_encaixes_dia": 5
   }
 ]
@@ -183,6 +192,15 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}&cidade={cidade_id}
     "sala": "RM1",
     "telefone": "(84) 3421-1234",
     "tempo_estimado_minutos": 40,
+    "vagas_por_dia": {
+      "vagas_seg": 12,
+      "vagas_ter": 8,
+      "vagas_qua": 10,
+      "vagas_qui": 12,
+      "vagas_sex": 10,
+      "vagas_sab": 6,
+      "vagas_dom": 0
+    },
     "medico_nome": null
   }
 ]
@@ -217,6 +235,12 @@ GET /buscar_horarios.php?agenda_id={id}&data={data}
       "disponivel": true
     }
   ],
+  "info_vagas": {
+    "limite_para_hoje": 20,
+    "ocupadas_hoje": 5,
+    "disponiveis_hoje": 15,
+    "dia_semana": "segunda"
+  },
   "info_encaixes": {
     "limite_total": 5,
     "ocupados": 1,
@@ -241,8 +265,11 @@ GET /verificar_vagas.php?agenda_id={id}&data={data}&convenio_id={convenio_id}
 **Exemplo de Resposta:**
 ```json
 {
-  "pode_agendar": true,
-  "horarios_disponiveis": 8
+  "tem_vagas": true,
+  "vagas_disponiveis": 8,
+  "limite_para_hoje": 20,
+  "dia_semana": "segunda",
+  "pode_agendar": true
 }
 ```
 
@@ -640,7 +667,7 @@ termo=João Silva
 ### Agendamentos
 - `"Horário não disponível"` - O horário solicitado já está ocupado
 - `"Agenda bloqueada"` - A agenda está bloqueada para agendamentos
-- `"Nenhum horário disponível"` - Não há horários livres na data solicitada
+- `"Limite de vagas atingido"` - Não há mais vagas disponíveis para o dia da semana
 - `"Paciente não encontrado"` - ID do paciente inválido
 - `"Agendamento não encontrado"` - ID do agendamento inválido
 
@@ -740,7 +767,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 - Todos os horários são no fuso horário de Brasília (BRT/BRST)
 - As datas devem estar no formato ISO 8601 (YYYY-MM-DD)
 - O sistema suporta agendamentos normais e encaixes
-- Existe controle de limite de encaixes por dia
+- Existe controle de limite de vagas por dia da semana e encaixes por dia
 - O sistema registra auditoria de todas as operações
 - Campos de texto suportam acentuação em português (UTF-8)
 
@@ -751,12 +778,37 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 - **Timeout:** Requisições podem ter timeout de 30 segundos para consultas complexas
 - **Encoding:** Sistema utiliza Windows-1252 internamente, com conversão para UTF-8 nas respostas
 
+## Sistema de Controle de Vagas
+
+O sistema utiliza **controle de vagas por dia da semana**, não por data específica:
+
+### Como Funciona
+O sistema utiliza campos específicos na tabela AGENDAS para cada dia da semana:
+- **VAGAS_SEG**: 20 vagas (Segunda-feira)
+- **VAGAS_TER**: 15 vagas (Terça-feira)  
+- **VAGAS_QUA**: 25 vagas (Quarta-feira)
+- **VAGAS_QUI**: 20 vagas (Quinta-feira)
+- **VAGAS_SEX**: 18 vagas (Sexta-feira)
+- **VAGAS_SAB**: 10 vagas (Sábado)
+- **VAGAS_DOM**: 0 vagas (Domingo)
+
+### Lógica de Controle
+- Cada agenda define vagas específicas para cada dia da semana usando campos separados
+- O sistema identifica o dia da semana da data solicitada
+- Busca o valor do campo correspondente (ex: VAGAS_SEG para segunda-feira)
+- Verifica quantos agendamentos NORMAIS já existem na data
+- **Exemplo**: Se VAGAS_SEG = 20 e há 15 agendamentos numa segunda-feira, restam 5 vagas
+
+### Tipos de Agendamento
+- **NORMAL**: Conta para o limite de vagas do dia da semana
+- **ENCAIXE**: Não conta para vagas normais, tem limite próprio separado
+
 ## Diferenças por Tipo de Agenda
 
 ### Consultas
 - Requerem médico e especialidade
 - Suportam retornos
-- Horários baseados em intervalos de tempo
+- Controle de vagas usando campos específicos (VAGAS_SEG, VAGAS_TER, etc.)
 
 ### Procedimentos
 - Podem não ter médico específico
@@ -772,7 +824,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 - Versão inicial da documentação
 - Suporte completo para consultas e procedimentos
 - Sistema de agendamento sequencial para ressonância
-- Controle de encaixes por dia
+- Controle de vagas por dia da semana e encaixes por dia
 
 ---
 
