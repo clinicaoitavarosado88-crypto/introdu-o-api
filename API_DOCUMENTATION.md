@@ -166,7 +166,6 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}&cidade={cidade_id}
     "sala": "101",
     "telefone": "(84) 3421-1234",
     "tempo_estimado_minutos": 30,
-    "limite_vagas_dia": 20,
     "limite_encaixes_dia": 5
   }
 ]
@@ -184,7 +183,6 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}&cidade={cidade_id}
     "sala": "RM1",
     "telefone": "(84) 3421-1234",
     "tempo_estimado_minutos": 40,
-    "limite_vagas_dia": 12,
     "medico_nome": null
   }
 ]
@@ -219,11 +217,6 @@ GET /buscar_horarios.php?agenda_id={id}&data={data}
       "disponivel": true
     }
   ],
-  "info_vagas": {
-    "limite_total": 20,
-    "ocupadas": 5,
-    "disponiveis": 15
-  },
   "info_encaixes": {
     "limite_total": 5,
     "ocupados": 1,
@@ -248,10 +241,8 @@ GET /verificar_vagas.php?agenda_id={id}&data={data}&convenio_id={convenio_id}
 **Exemplo de Resposta:**
 ```json
 {
-  "tem_vagas": true,
-  "vagas_disponiveis": 8,
-  "limite_total": 20,
-  "pode_agendar": true
+  "pode_agendar": true,
+  "horarios_disponiveis": 8
 }
 ```
 
@@ -649,7 +640,7 @@ termo=João Silva
 ### Agendamentos
 - `"Horário não disponível"` - O horário solicitado já está ocupado
 - `"Agenda bloqueada"` - A agenda está bloqueada para agendamentos
-- `"Limite de vagas atingido"` - Não há mais vagas disponíveis no dia
+- `"Nenhum horário disponível"` - Não há horários livres na data solicitada
 - `"Paciente não encontrado"` - ID do paciente inválido
 - `"Agendamento não encontrado"` - ID do agendamento inválido
 
@@ -749,7 +740,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 - Todos os horários são no fuso horário de Brasília (BRT/BRST)
 - As datas devem estar no formato ISO 8601 (YYYY-MM-DD)
 - O sistema suporta agendamentos normais e encaixes
-- Existe controle de limite de vagas por dia e por convênio
+- Existe controle de limite de encaixes por dia
 - O sistema registra auditoria de todas as operações
 - Campos de texto suportam acentuação em português (UTF-8)
 
@@ -765,7 +756,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 ### Consultas
 - Requerem médico e especialidade
 - Suportam retornos
-- Controle de vagas por convênio
+- Horários baseados em intervalos de tempo
 
 ### Procedimentos
 - Podem não ter médico específico
@@ -781,7 +772,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_
 - Versão inicial da documentação
 - Suporte completo para consultas e procedimentos
 - Sistema de agendamento sequencial para ressonância
-- Controle de vagas e encaixes
+- Controle de encaixes por dia
 
 ---
 
