@@ -818,7 +818,366 @@ O sistema utiliza campos específicos na tabela AGENDAS para cada dia da semana:
 
 ---
 
+---
+
+## Endpoints para Agentes de IA
+
+### Consultar Preços
+Retorna valores por especialidade, procedimento e convênio para facilitar cotações.
+
+**Requisição:**
+```http
+GET /consultar_precos.php?especialidade_id={id}&convenio_id={id}&unidade_id={id}
+```
+
+**Parâmetros de Query:**
+- `especialidade_id` (integer, opcional): ID da especialidade
+- `procedimento_id` (integer, opcional): ID do procedimento
+- `convenio_id` (integer, obrigatório): ID do convênio
+- `unidade_id` (integer, opcional): ID da unidade
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "total_precos": 1,
+  "precos": [{
+    "tipo_servico": "consulta",
+    "especialidade_nome": "Cardiologia",
+    "convenio_nome": "Amil",
+    "valor_consulta": 150.00,
+    "valor_retorno": 80.00
+  }]
+}
+```
+
+---
+
+### Cadastrar Paciente
+Permite cadastro completo de novos pacientes com validações automáticas.
+
+**Requisição:**
+```http
+POST /cadastrar_paciente.php
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "nome": "João Silva Santos",
+  "cpf": "123.456.789-01",
+  "data_nascimento": "1990-01-01",
+  "telefone": "(84) 99999-9999",
+  "email": "joao@email.com",
+  "endereco": "Rua Principal, 123",
+  "cidade": "Mossoró",
+  "estado": "RN"
+}
+```
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "message": "Paciente cadastrado com sucesso",
+  "paciente": {
+    "id": 622690,
+    "nome": "João Silva Santos",
+    "cpf": "123.456.789-01",
+    "data_cadastro": "2025-09-29 14:30:00"
+  }
+}
+```
+
+---
+
+### Consultar Unidades
+Fornece informações detalhadas das unidades incluindo especialidades, médicos e horários.
+
+**Requisição:**
+```http
+GET /consultar_unidades.php?unidade_id={id}&ativa_apenas=true
+```
+
+**Parâmetros de Query:**
+- `unidade_id` (integer, opcional): ID específico da unidade
+- `ativa_apenas` (boolean, opcional): Apenas unidades ativas (default: true)
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "unidade": {
+    "id": 1,
+    "nome": "Mossoró",
+    "endereco": "Rua Principal, 123",
+    "telefone": "(84) 3421-1234",
+    "servicos": {
+      "especialidades": [
+        {"id": 1, "nome": "Cardiologia"}
+      ],
+      "procedimentos": [
+        {"id": 34, "nome": "Ressonância Magnética"}
+      ]
+    },
+    "horario_funcionamento": {
+      "geral": {
+        "inicio": "07:00",
+        "fim": "17:00"
+      },
+      "por_dia": {
+        "SEGUNDA": [{"inicio": "07:00", "fim": "17:00"}]
+      }
+    }
+  }
+}
+```
+
+---
+
+### Consultar Preparos
+Lista instruções de preparos por exame ou procedimento sem necessidade de agendamento.
+
+**Requisição:**
+```http
+GET /consultar_preparos.php?exame_id={id}&procedimento_id={id}&busca={termo}
+```
+
+**Parâmetros de Query:**
+- `exame_id` (integer, opcional): ID do exame específico
+- `procedimento_id` (integer, opcional): ID do procedimento
+- `busca` (string, opcional): Termo para busca livre
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "total_preparos": 1,
+  "preparos": [{
+    "exame_nome": "Ressonância Magnética - Crânio",
+    "titulo": "Preparo para RM",
+    "instrucoes": [
+      "Jejum de 4 horas antes do exame",
+      "Retirar todos os objetos metálicos"
+    ],
+    "tempo_jejum_horas": 4,
+    "anexos": [
+      {
+        "nome": "orientacoes_rm.pdf",
+        "url_download": "/download_anexo_preparo.php?id=123"
+      }
+    ]
+  }]
+}
+```
+
+---
+
+### Agendamentos por Paciente
+Facilita confirmações, cancelamentos e reagendamentos com histórico completo.
+
+**Requisição:**
+```http
+GET /consultar_agendamentos_paciente.php?paciente_id={id}&cpf={cpf}&status={status}
+```
+
+**Parâmetros de Query:**
+- `paciente_id` (integer, opcional): ID do paciente
+- `cpf` (string, opcional): CPF do paciente
+- `status` (string, opcional): Filtrar por status
+- `data_inicio` (string, opcional): Data inicial (YYYY-MM-DD)
+- `data_fim` (string, opcional): Data final (YYYY-MM-DD)
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "paciente": {
+    "nome": "João Silva Santos",
+    "cpf": "123.456.789-01"
+  },
+  "agendamentos": [{
+    "id": 123,
+    "numero": 2415001,
+    "data": "2025-09-10",
+    "horario": "08:00",
+    "status": "AGENDADO",
+    "especialidade": {"nome": "Cardiologia"},
+    "unidade": {"nome": "Mossoró"},
+    "acoes_permitidas": {
+      "pode_cancelar": true,
+      "pode_reagendar": true,
+      "pode_confirmar": true
+    }
+  }]
+}
+```
+
+---
+
+### Processar No-Show
+Define status específico que aciona automaticamente notificação para a equipe responsável.
+
+**Requisição:**
+```http
+POST /processar_noshow.php
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "agendamento_id": 123,
+  "observacao": "Paciente não compareceu",
+  "enviar_notificacao": true,
+  "usuario": "RECEPCAO"
+}
+```
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "message": "No-show registrado com sucesso",
+  "agendamento": {
+    "numero": 2415001,
+    "status_anterior": "AGENDADO",
+    "status_atual": "FALTOU"
+  },
+  "notificacoes": {
+    "total_enviadas": 3,
+    "enviadas": [
+      {"tipo": "whatsapp_equipe", "destinatario": "Dr. João", "status": "enviado"},
+      {"tipo": "email_equipe", "destinatario": "Coordenação", "status": "enviado"}
+    ]
+  }
+}
+```
+
+---
+
+### Consultar Valores para OS
+Permite consulta de valores antes de criar Ordem de Serviço para validação de cobertura.
+
+**Requisição:**
+```http
+GET /consultar_valores_os.php?convenio_id={id}&exames_ids={ids}&especialidade_id={id}
+```
+
+**Parâmetros de Query:**
+- `convenio_id` (integer, obrigatório): ID do convênio
+- `exame_id` (integer, opcional): ID de exame específico
+- `exames_ids` (string, opcional): Lista de IDs separados por vírgula
+- `especialidade_id` (integer, opcional): ID da especialidade
+- `procedimento_id` (integer, opcional): ID do procedimento
+
+**Exemplo de Resposta:**
+```json
+{
+  "status": "sucesso",
+  "convenio": {"nome": "Amil"},
+  "resumo": {
+    "valor_total_geral": 350.50,
+    "itens_com_valor": 2,
+    "itens_sem_cobertura": 0
+  },
+  "valores": [{
+    "tipo": "exame",
+    "exame_id": 31,
+    "nome": "Ressonância Magnética - Crânio",
+    "valor_unitario": 250.00,
+    "coberto_convenio": true,
+    "pode_adicionar": true
+  }]
+}
+```
+
+---
+
+## Fluxos Completos para Agentes de IA
+
+### Fluxo de Agendamento de Consulta com Validação de Preços
+
+1. **Consultar preços:**
+```bash
+curl -X GET "/consultar_precos.php?especialidade_id=1&convenio_id=24" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+2. **Buscar unidades disponíveis:**
+```bash
+curl -X GET "/consultar_unidades.php" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+3. **Cadastrar paciente (se necessário):**
+```bash
+curl -X POST "/cadastrar_paciente.php" \
+  -H "Authorization: Bearer TOKEN" \
+  -d '{"nome":"João Silva","cpf":"123.456.789-01",...}'
+```
+
+4. **Criar agendamento:**
+```bash
+curl -X POST "/processar_agendamento.php" \
+  -H "Authorization: Bearer TOKEN" \
+  -d "agenda_id=1&data_agendamento=2025-09-10&..."
+```
+
+### Fluxo de Procedimento com Preparos e OS
+
+1. **Consultar preparos:**
+```bash
+curl -X GET "/consultar_preparos.php?procedimento_id=34" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+2. **Validar valores da OS:**
+```bash
+curl -X GET "/consultar_valores_os.php?convenio_id=24&procedimento_id=34" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+3. **Criar agendamento e OS:**
+```bash
+curl -X POST "/processar_agendamento.php" \
+  -H "Authorization: Bearer TOKEN"
+# Seguido de
+curl -X POST "/processar_ordem_servico.php" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+### Fluxo de Gestão de No-Show
+
+1. **Consultar agendamentos do paciente:**
+```bash
+curl -X GET "/consultar_agendamentos_paciente.php?cpf=123.456.789-01" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+2. **Processar no-show com notificações:**
+```bash
+curl -X POST "/processar_noshow.php" \
+  -H "Authorization: Bearer TOKEN" \
+  -d '{"agendamento_id":123,"enviar_notificacao":true}'
+```
+
+---
+
 ## Changelog
+
+### v2.0 (Setembro 2025) - 🤖 **Otimização para Agentes de IA**
+- ✅ **7 novos endpoints** específicos para Agentes de IA
+- ✅ **Consultar preços** por especialidade e convênio
+- ✅ **Cadastrar pacientes** com validações automáticas
+- ✅ **Informações completas** de unidades
+- ✅ **Preparos de exames** sem necessidade de agendamento
+- ✅ **Agendamentos por paciente** com ações permitidas
+- ✅ **Fluxo de No-Show** com notificações automáticas
+- ✅ **Consultar valores** para criação de OS
+- ✅ **Auditoria expandida** para todas as operações
+- ✅ **Notificações inteligentes** via WhatsApp e email
 
 ### v1.0 (Setembro 2025)
 - Versão inicial da documentação
@@ -832,5 +1191,6 @@ O sistema utiliza campos específicos na tabela AGENDAS para cada dia da semana:
 
 Para dúvidas sobre a API, entre em contato com a equipe de desenvolvimento.
 
-**Versão da API:** 1.0  
+**Versão da API:** 2.0
 **Última atualização:** Setembro 2025
+**Otimizada para:** 🤖 Agentes de IA
