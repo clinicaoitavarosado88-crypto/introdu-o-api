@@ -44,6 +44,12 @@ curl -X POST "/auth/token.php" \
 
 ## 🆕 **ENDPOINTS PARA AGENTES DE IA**
 
+> **✅ CORREÇÕES APLICADAS EM 04/10/2025:**
+> - Todos endpoints agora incluem `ibase_commit()` e `ibase_rollback()`
+> - Validação de resultados de queries implementada
+> - Tratamento de erros aprimorado
+> - Transações Firebird gerenciadas corretamente
+
 ### 1. 💰 **Consultar Preços**
 `GET /consultar_precos.php`
 
@@ -70,10 +76,18 @@ curl -H "Authorization: Bearer TOKEN" \
 
 ---
 
-### 2. 👤 **Cadastrar Paciente**
+### 2. 👤 **Cadastrar Paciente** ✅ CORRIGIDO
 `POST /cadastrar_paciente.php`
 
 Cadastro completo de novos pacientes com validações.
+
+**Campos obrigatórios:**
+- `nome`: Nome completo
+- `data_nascimento`: Formato YYYY-MM-DD
+- `telefone`: Telefone de contato
+
+**Campos opcionais:**
+- `cpf`, `email`, `endereco`, `cep`, `cidade`, `estado`, `rg`, `sexo`, `profissao`, `estado_civil`
 
 ```bash
 curl -X POST -H "Authorization: Bearer TOKEN" \
@@ -96,17 +110,22 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
   "paciente": {
     "id": 622690,
     "nome": "João Silva",
-    "cpf": "123.456.789-01"
+    "cpf": "123.456.789-01",
+    "data_cadastro": "2025-10-04 14:30:00"
   }
 }
 ```
 
 ---
 
-### 3. 🏥 **Consultar Unidades**
+### 3. 🏥 **Consultar Unidades** ✅ CORRIGIDO
 `GET /consultar_unidades.php`
 
 Informações completas das unidades com especialidades e médicos.
+
+**Parâmetros:**
+- `unidade_id` (opcional): ID específico da unidade
+- `ativa_apenas` (opcional): Apenas ativas (default: true)
 
 ```bash
 curl -H "Authorization: Bearer TOKEN" \
@@ -172,10 +191,17 @@ curl -H "Authorization: Bearer TOKEN" \
 
 ---
 
-### 5. 📅 **Agendamentos por Paciente**
+### 5. 📅 **Agendamentos por Paciente** ✅ CORRIGIDO
 `GET /consultar_agendamentos_paciente.php`
 
 Histórico completo com ações permitidas.
+
+**Parâmetros:**
+- `paciente_id` ou `cpf`: Obrigatório (um dos dois)
+- `status` (opcional): Filtrar por status
+- `data_inicio` (opcional): Data inicial YYYY-MM-DD
+- `data_fim` (opcional): Data final YYYY-MM-DD
+- `limite` (opcional): Limite de registros (default: 50)
 
 ```bash
 curl -H "Authorization: Bearer TOKEN" \
@@ -192,6 +218,11 @@ curl -H "Authorization: Bearer TOKEN" \
     "cpf": "123.456.789-01"
   },
   "total_agendamentos": 2,
+  "filtros_aplicados": {
+    "paciente_id": 1,
+    "status": "AGENDADO",
+    "limite": 50
+  },
   "agendamentos": [{
     "id": 123,
     "numero": 2415001,
@@ -200,6 +231,11 @@ curl -H "Authorization: Bearer TOKEN" \
     "status": "AGENDADO",
     "especialidade": {"nome": "Cardiologia"},
     "unidade": {"nome": "Mossoró"},
+    "exames": [],
+    "ordem_servico": {
+      "tem_os": false,
+      "numero": null
+    },
     "acoes_permitidas": {
       "pode_cancelar": true,
       "pode_reagendar": true,
@@ -405,27 +441,23 @@ cp includes/connection.php.example includes/connection.php
 
 ## 📈 **PERFORMANCE**
 
-### **Cache Implementado:**
-- ✅ **Especialidades** - 15 min
-- ✅ **Convênios** - 30 min
-- ✅ **Horários** - 5 min
-- ✅ **Preparos** - 1 hora
-
 ### **Otimizações:**
 - 🚀 **Queries otimizadas** com índices
-- 📦 **Respostas comprimidas** (gzip)
-- 🔄 **Conexão persistente** com banco
+- 📦 **Respostas JSON UTF-8**
+- 🔄 **Transações Firebird** com commit/rollback
 - 📊 **Logs estruturados** para monitoramento
+- ✅ **Validações de resultado** em todas queries
 
 ---
 
 ## 🔒 **SEGURANÇA**
 
-- 🛡️ **Autenticação Bearer Token**
-- 🔐 **Sanitização SQL** completa
+- 🛡️ **Autenticação Bearer Token** (1 ano validade)
+- 🔐 **Sanitização SQL** com prepared statements
 - 📝 **Auditoria** de todas as operações
-- 🚫 **Rate limiting** por IP
 - 🔍 **Validação** rigorosa de entrada
+- ✅ **Transações** com commit/rollback automático
+- 🚨 **Error handling** robusto
 
 ---
 
@@ -441,8 +473,31 @@ cp includes/connection.php.example includes/connection.php
 
 Propriedade da **Clínica Oitava Rosado** - Todos os direitos reservados.
 
-**Versão:** 2.0
-**Última atualização:** Setembro 2025
+**Versão:** 2.1
+**Última atualização:** 04 Outubro 2025
+
+---
+
+## 📝 **CHANGELOG**
+
+### **v2.1** - 04/10/2025
+- ✅ **Correção crítica:** Adicionado `ibase_commit()` em todos endpoints
+- ✅ **Correção crítica:** Adicionado `ibase_rollback()` no tratamento de erros
+- ✅ **Melhoria:** Validação de resultados de queries
+- ✅ **Correção:** `consultar_unidades.php` - Transações corrigidas
+- ✅ **Correção:** `cadastrar_paciente.php` - Commit após inserção
+- ✅ **Correção:** `consultar_agendamentos_paciente.php` - Transações gerenciadas
+
+### **v2.0** - Setembro 2025
+- 🎉 **7 novos endpoints** específicos para Agentes de IA
+- 🤖 Otimizações para integração com IA
+- 📝 Auditoria expandida
+- 📱 Notificações WhatsApp
+
+### **v1.0** - Agosto 2025
+- 🚀 Versão inicial da API
+- 📅 Sistema de agendamento completo
+- 🏥 Suporte consultas e procedimentos
 
 ---
 
