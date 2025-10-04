@@ -1167,6 +1167,15 @@ curl -X POST "/processar_noshow.php" \
 
 ## Changelog
 
+### v2.1 (04 Outubro 2025) - 🔧 **Correções Críticas**
+- ✅ **CORREÇÃO CRÍTICA:** Adicionado `ibase_commit()` em todos endpoints de leitura
+- ✅ **CORREÇÃO CRÍTICA:** Adicionado `ibase_rollback()` em blocos catch para rollback de transações
+- ✅ **CORREÇÃO:** `consultar_unidades.php` - Transações Firebird corrigidas
+- ✅ **CORREÇÃO:** `cadastrar_paciente.php` - Commit após inserção implementado
+- ✅ **CORREÇÃO:** `consultar_agendamentos_paciente.php` - Gerenciamento de transações
+- ✅ **MELHORIA:** Validação de resultados de queries antes de processar
+- ✅ **MELHORIA:** Tratamento de erros mais robusto em todas as APIs
+
 ### v2.0 (Setembro 2025) - 🤖 **Otimização para Agentes de IA**
 - ✅ **7 novos endpoints** específicos para Agentes de IA
 - ✅ **Consultar preços** por especialidade e convênio
@@ -1179,7 +1188,7 @@ curl -X POST "/processar_noshow.php" \
 - ✅ **Auditoria expandida** para todas as operações
 - ✅ **Notificações inteligentes** via WhatsApp e email
 
-### v1.0 (Setembro 2025)
+### v1.0 (Agosto 2025)
 - Versão inicial da documentação
 - Suporte completo para consultas e procedimentos
 - Sistema de agendamento sequencial para ressonância
@@ -1187,10 +1196,26 @@ curl -X POST "/processar_noshow.php" \
 
 ---
 
+## Notas Técnicas Importantes
+
+### Gerenciamento de Transações Firebird
+Todas as operações com banco de dados Firebird agora implementam corretamente:
+- **Commit explícito** (`ibase_commit()`) após operações bem-sucedidas
+- **Rollback automático** (`ibase_rollback()`) em caso de erros
+- **Validação de resultados** antes de processar dados retornados
+
+Isso garante:
+- ✅ Consistência de dados
+- ✅ Liberação adequada de recursos
+- ✅ Prevenção de locks no banco
+- ✅ Tratamento correto de erros
+
+---
+
 ## Suporte
 
 Para dúvidas sobre a API, entre em contato com a equipe de desenvolvimento.
 
-**Versão da API:** 2.0
-**Última atualização:** Setembro 2025
+**Versão da API:** 2.1
+**Última atualização:** 04 Outubro 2025
 **Otimizada para:** 🤖 Agentes de IA
