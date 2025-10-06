@@ -44,6 +44,12 @@ curl -X POST "/auth/token.php" \
 
 ## 🆕 **ENDPOINTS PARA AGENTES DE IA**
 
+> **✅ CORREÇÕES APLICADAS EM 06/10/2025:**
+> - **Autenticação corrigida** em `consultar_unidades.php`, `cadastrar_paciente.php` e `consultar_agendamentos_paciente.php`
+> - Função `verify_api_token()` refatorada para retornar array com status
+> - Mensagens de erro de autenticação mais descritivas
+> - Bearer Token funcionando corretamente em todos os 3 endpoints
+>
 > **✅ CORREÇÕES APLICADAS EM 04/10/2025:**
 > - Todos endpoints agora incluem `ibase_commit()` e `ibase_rollback()`
 > - Validação de resultados de queries implementada
@@ -76,10 +82,10 @@ curl -H "Authorization: Bearer TOKEN" \
 
 ---
 
-### 2. 👤 **Cadastrar Paciente** ✅ CORRIGIDO
+### 2. 👤 **Cadastrar Paciente** ✅ AUTENTICAÇÃO CORRIGIDA
 `POST /cadastrar_paciente.php`
 
-Cadastro completo de novos pacientes com validações.
+Cadastro completo de novos pacientes com validações. **Autenticação via Bearer Token funcionando corretamente.**
 
 **Campos obrigatórios:**
 - `nome`: Nome completo
@@ -118,10 +124,10 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 
 ---
 
-### 3. 🏥 **Consultar Unidades** ✅ CORRIGIDO
+### 3. 🏥 **Consultar Unidades** ✅ AUTENTICAÇÃO CORRIGIDA
 `GET /consultar_unidades.php`
 
-Informações completas das unidades com especialidades e médicos.
+Informações completas das unidades com especialidades e médicos. **Autenticação via Bearer Token funcionando corretamente.**
 
 **Parâmetros:**
 - `unidade_id` (opcional): ID específico da unidade
@@ -191,10 +197,10 @@ curl -H "Authorization: Bearer TOKEN" \
 
 ---
 
-### 5. 📅 **Agendamentos por Paciente** ✅ CORRIGIDO
+### 5. 📅 **Agendamentos por Paciente** ✅ AUTENTICAÇÃO CORRIGIDA
 `GET /consultar_agendamentos_paciente.php`
 
-Histórico completo com ações permitidas.
+Histórico completo com ações permitidas. **Autenticação via Bearer Token funcionando corretamente.**
 
 **Parâmetros:**
 - `paciente_id` ou `cpf`: Obrigatório (um dos dois)
@@ -473,12 +479,20 @@ cp includes/connection.php.example includes/connection.php
 
 Propriedade da **Clínica Oitava Rosado** - Todos os direitos reservados.
 
-**Versão:** 2.1
-**Última atualização:** 04 Outubro 2025
+**Versão:** 2.2
+**Última atualização:** 06 Outubro 2025
 
 ---
 
 ## 📝 **CHANGELOG**
+
+### **v2.2** - 06/10/2025
+- ✅ **Correção crítica:** Autenticação corrigida em 3 endpoints principais
+- ✅ **Correção:** `verify_api_token()` - Função renomeada e refatorada
+- ✅ **Correção:** `consultar_unidades.php` - Autenticação funcionando
+- ✅ **Correção:** `cadastrar_paciente.php` - Autenticação funcionando
+- ✅ **Correção:** `consultar_agendamentos_paciente.php` - Autenticação funcionando
+- ✅ **Melhoria:** Mensagens de erro mais descritivas para autenticação
 
 ### **v2.1** - 04/10/2025
 - ✅ **Correção crítica:** Adicionado `ibase_commit()` em todos endpoints
