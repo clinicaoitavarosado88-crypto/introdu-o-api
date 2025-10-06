@@ -675,8 +675,10 @@ termo=João Silva
 - `"Authorization header missing"` - Header Authorization não fornecido
 - `"Invalid authorization format"` - Formato inválido do token (deve ser Bearer <token>)
 - `"Invalid token"` - Token não encontrado ou inválido
-- `"Token expired"` - Token expirado
+- `"Token expired"` - Token expirado (validade de 1 ano)
 - `"Token verification failed"` - Erro interno na verificação do token
+
+**Nota:** Todos os endpoints marcados com ✅ CORRIGIDO agora utilizam a função `verify_api_token()` que retorna um array com status de validação e mensagem de erro, permitindo melhor controle do fluxo de autenticação.
 
 ### Geral
 - `"Parâmetros inválidos"` - Parâmetros obrigatórios não fornecidos ou inválidos
@@ -1167,6 +1169,15 @@ curl -X POST "/processar_noshow.php" \
 
 ## Changelog
 
+### v2.2 (06 Outubro 2025) - 🔐 **Correção de Autenticação**
+- ✅ **CORREÇÃO CRÍTICA:** Autenticação corrigida em `consultar_unidades.php`
+- ✅ **CORREÇÃO CRÍTICA:** Autenticação corrigida em `cadastrar_paciente.php`
+- ✅ **CORREÇÃO CRÍTICA:** Autenticação corrigida em `consultar_agendamentos_paciente.php`
+- ✅ **CORREÇÃO:** Função `verify_api_token()` renomeada e refatorada
+- ✅ **CORREÇÃO:** Retorno da função alterado para array com status e mensagem
+- ✅ **MELHORIA:** Melhor tratamento de erros de autenticação
+- ✅ **MELHORIA:** Mensagens de erro mais descritivas
+
 ### v2.1 (04 Outubro 2025) - 🔧 **Correções Críticas**
 - ✅ **CORREÇÃO CRÍTICA:** Adicionado `ibase_commit()` em todos endpoints de leitura
 - ✅ **CORREÇÃO CRÍTICA:** Adicionado `ibase_rollback()` em blocos catch para rollback de transações
@@ -1216,6 +1227,6 @@ Isso garante:
 
 Para dúvidas sobre a API, entre em contato com a equipe de desenvolvimento.
 
-**Versão da API:** 2.1
-**Última atualização:** 04 Outubro 2025
+**Versão da API:** 2.2
+**Última atualização:** 06 Outubro 2025
 **Otimizada para:** 🤖 Agentes de IA
