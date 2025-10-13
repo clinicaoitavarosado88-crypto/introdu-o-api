@@ -1,14 +1,64 @@
 # API Sistema de Agendamento - Clínica Oitava Rosado
 
+[![API Version](https://img.shields.io/badge/API-v2.4-green.svg)](README.md)
+[![Status](https://img.shields.io/badge/Status-Production-success.svg)]()
+[![Last Update](https://img.shields.io/badge/Updated-13%2F10%2F2025-blue.svg)]()
+
+> 📢 **Versão 2.4** - Novos endpoints JSON estruturados, correções críticas e melhorias de UX
+
+## 📑 Índice
+
+- [Visão Geral](#visão-geral)
+- [Novidades v2.4](#-novidades-versão-24)
+- [Autenticação](#autenticação)
+- [Status Codes](#status-codes)
+- [Endpoints](#endpoints)
+  - [Médicos](#médicos)
+  - [Especialidades](#especialidades)
+  - [Agendas e Horários](#agendas-e-horários)
+  - [Procedimentos e Exames](#procedimentos-e-exames)
+  - [Agendamentos](#agendamentos)
+  - [Convênios](#convênios)
+  - [Pacientes](#pacientes)
+  - [Preços](#preços)
+  - [Auditoria](#auditoria)
+- [Collections Postman](#-collections-postman)
+- [Erros Comuns](#erros-comuns)
+
+---
+
+## 🆕 Novidades Versão 2.4
+
+### Correções Críticas
+
+1. **✅ Processar Agendamento** - Aceita `hora_agendamento` E `horario_agendamento`
+2. **✅ Buscar Horários** - Mensagens de erro HTTP 404 descritivas
+3. **✅ Consultar Preços** - Corrigido para usar tabelas corretas
+
+### Novas Funcionalidades
+
+1. **⭐ Listar Agendas JSON** - Endpoint `listar_agendas_json.php`
+   - Substitui HTML por JSON estruturado
+   - ~60% menor, mais rápido
+   - Ideal para IA/chatbots
+
+2. **🎁 Campo `agenda` no Response** - Informações completas da agenda no retorno
+
+**📄 Documentação:** [CORRECAO_PROCESSAR_AGENDAMENTO.md](CORRECAO_PROCESSAR_AGENDAMENTO.md) | [CONVERSAO_LISTAR_AGENDAS_JSON.md](CONVERSAO_LISTAR_AGENDAS_JSON.md)
+
+---
+
 ## Visão Geral
 
 Esta documentação descreve a API REST do Sistema de Agendamento da Clínica Oitava Rosado, desenvolvida em PHP utilizando banco de dados Firebird. A API permite gerenciar médicos, especialidades, horários e agendamentos.
 
 **URL Base:** `http://sistema.clinicaoitavarosado.com.br/oitava/agenda/`
 
-**Formato de Resposta:** JSON
+**Formato de Resposta:** JSON (UTF-8)
 
-**Autenticação:** Token de API (Bearer Token)
+**Autenticação:** Bearer Token
+
+**Banco de Dados:** Firebird (Windows-1252 → UTF-8)
 
 ## Autenticação
 
@@ -205,6 +255,205 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}&cidade={cidade_id}
   }
 ]
 ```
+
+#### Listar Agendas (JSON Estruturado) ⭐ RECOMENDADO
+Retorna lista detalhada de agendas em formato JSON estruturado. Substitui o endpoint HTML com dados completos incluindo horários, vagas, convênios e avisos.
+
+**Endpoint:** `listar_agendas_json.php`
+
+**Requisição:**
+```http
+GET /listar_agendas_json.php?tipo={tipo}&nome={nome}&dia={dia_semana}&cidade={cidade_id}
+```
+
+**Parâmetros de Query:**
+- `tipo` (string, **obrigatório**): Tipo da agenda ("consulta" ou "procedimento")
+- `nome` (string, **obrigatório**): Nome da especialidade (ex: "Cardiologista") ou procedimento (ex: "Ultrassonografia")
+- `dia` (string, opcional): Dia da semana ("Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo")
+- `cidade` (integer, opcional): ID da cidade/unidade
+
+**Exemplo de Requisição:**
+```bash
+curl -X GET "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/listar_agendas_json.php?tipo=consulta&nome=Cardiologista&dia=Segunda" \
+  -H "Authorization: Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0"
+```
+
+**Exemplo de Resposta (Consulta):**
+```json
+{
+  "status": "sucesso",
+  "total_agendas": 1,
+  "filtros_aplicados": {
+    "tipo": "consulta",
+    "nome": "Cardiologista",
+    "dia_semana": "Segunda",
+    "cidade_id": null
+  },
+  "agendas": [
+    {
+      "id": 178,
+      "tipo": "consulta",
+      "medico": {
+        "id": 2780,
+        "nome": "CAMILO DE PAIVA CANTIDIO"
+      },
+      "especialidade": {
+        "id": 5,
+        "nome": "Cardiologista"
+      },
+      "localizacao": {
+        "unidade_id": 1,
+        "unidade_nome": "MOSSORÓ - RN",
+        "sala": "201",
+        "telefone": "(84) 3315-2773"
+      },
+      "configuracoes": {
+        "tempo_estimado_minutos": 20,
+        "idade_minima": null,
+        "possui_retorno": true,
+        "atende_comorbidade": false
+      },
+      "limites": {
+        "vagas_dia": 20,
+        "retornos_dia": 5,
+        "encaixes_dia": 3
+      },
+      "horarios_por_dia": {
+        "Segunda": [
+          {
+            "periodo": "manha",
+            "inicio": "07:00",
+            "fim": "13:20"
+          }
+        ],
+        "Quarta": [
+          {
+            "periodo": "continuo",
+            "inicio": "08:00",
+            "fim": "17:00"
+          }
+        ]
+      },
+      "vagas_por_dia": {
+        "Segunda": 20,
+        "Quarta": 15
+      },
+      "convenios": [
+        {
+          "id": 1,
+          "nome": "SUS"
+        },
+        {
+          "id": 962,
+          "nome": "PARTICULAR"
+        }
+      ],
+      "avisos": {
+        "observacoes": "NAO ESTA ATENDENDO AMIL",
+        "informacoes_fixas": "ATENDE SAUDE BRASIL CRM 5991",
+        "orientacoes": "Trazer exames anteriores"
+      }
+    }
+  ]
+}
+```
+
+**Exemplo de Resposta (Procedimento):**
+```json
+{
+  "status": "sucesso",
+  "total_agendas": 1,
+  "filtros_aplicados": {
+    "tipo": "procedimento",
+    "nome": "Ultrassonografia",
+    "dia_semana": null,
+    "cidade_id": null
+  },
+  "agendas": [
+    {
+      "id": 30,
+      "tipo": "procedimento",
+      "procedimento": {
+        "id": 34,
+        "nome": "Ultrassonografia"
+      },
+      "medico": {
+        "id": 1234,
+        "nome": "MARIA SILVA"
+      },
+      "localizacao": {
+        "unidade_id": 2,
+        "unidade_nome": "ZONA SUL",
+        "sala": "US-1",
+        "telefone": "(84) 3315-8888"
+      },
+      "configuracoes": {
+        "tempo_estimado_minutos": 30,
+        "idade_minima": null,
+        "possui_retorno": false,
+        "atende_comorbidade": true
+      },
+      "limites": {
+        "vagas_dia": 15,
+        "retornos_dia": 0,
+        "encaixes_dia": 2
+      },
+      "horarios_por_dia": {
+        "Terça": [
+          {
+            "periodo": "manha",
+            "inicio": "08:00",
+            "fim": "12:00"
+          }
+        ],
+        "Quinta": [
+          {
+            "periodo": "tarde",
+            "inicio": "14:00",
+            "fim": "18:00"
+          }
+        ]
+      },
+      "vagas_por_dia": {
+        "Terça": 15,
+        "Quinta": 12
+      },
+      "convenios": [
+        {
+          "id": 1,
+          "nome": "SUS"
+        },
+        {
+          "id": 24,
+          "nome": "AMIL"
+        }
+      ],
+      "avisos": {
+        "observacoes": null,
+        "informacoes_fixas": "JEJUM DE 8 HORAS",
+        "orientacoes": null
+      }
+    }
+  ]
+}
+```
+
+**Códigos de Erro:**
+- `400 Bad Request`: Parâmetro `tipo` ausente ou inválido
+- `404 Not Found`: Especialidade ou procedimento não encontrado
+- `401 Unauthorized`: Token de autenticação ausente ou inválido
+
+**Vantagens sobre o endpoint HTML:**
+- ✅ Dados estruturados em JSON puro (sem HTML)
+- ✅ IDs numéricos acessíveis diretamente
+- ✅ Horários estruturados por período (manhã/tarde/contínuo)
+- ✅ Avisos importantes em campos dedicados
+- ✅ Menor tamanho de resposta (~60% menor)
+- ✅ Processável por IA/chatbots sem parser HTML
+
+**Collection Postman:** `Listar_Agendas_JSON.postman_collection.json`
+
+**Documentação Completa:** Ver `CONVERSAO_LISTAR_AGENDAS_JSON.md`
 
 #### Buscar Horários Disponíveis
 Retorna horários disponíveis para uma agenda em uma data específica.
@@ -443,43 +692,116 @@ POST /processar_agendamento.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
-**Parâmetros do Body (Consulta):**
-```
-agenda_id=1
-data_agendamento=2025-09-10
-hora_agendamento=08:00
-paciente_id=1
-convenio_id=24
-tipo_consulta=primeira_vez
-observacoes=Paciente relatou dores no peito
-especialidade_id=1
+**Parâmetros Obrigatórios:**
+- `agenda_id` (integer): ID da agenda
+- `data_agendamento` (string): Data no formato YYYY-MM-DD
+- `hora_agendamento` OU `horario_agendamento` (string): Horário no formato HH:MM ⚠️ **AMBOS ACEITOS**
+- `nome_paciente` (string): Nome completo do paciente
+- `telefone_paciente` (string): Telefone de contato
+- `convenio_id` (integer): ID do convênio
+
+**Parâmetros Opcionais:**
+- `paciente_id` (integer): ID do paciente se já cadastrado
+- `usar_paciente_existente` (boolean string): `"true"` ou `"false"`
+- `deve_cadastrar_paciente` (boolean string): `"true"` ou `"false"`
+- `tipo_consulta` (string): `primeira_vez` ou `retorno`
+- `observacoes` (string): Observações adicionais
+- `especialidade_id` (integer): ID da especialidade (para médicos com múltiplas)
+- `exames_ids` (string): IDs separados por vírgula (ex: `"31,32,33"`)
+- `cpf_paciente` (string): CPF do paciente
+- `data_nascimento` (string): Data de nascimento YYYY-MM-DD
+- `sexo` (string): `M` ou `F`
+- `email_paciente` (string): E-mail do paciente
+
+**Exemplo de Requisição (Consulta):**
+```bash
+curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_agendamento.php" \
+  -d "agenda_id=1" \
+  -d "data_agendamento=2025-09-10" \
+  -d "hora_agendamento=08:00" \
+  -d "paciente_id=1" \
+  -d "convenio_id=24" \
+  -d "tipo_consulta=primeira_vez" \
+  -d "usar_paciente_existente=true" \
+  -d "nome_paciente=João Silva" \
+  -d "telefone_paciente=(84) 99999-9999" \
+  -d "observacoes=Paciente relatou dores no peito" \
+  -d "especialidade_id=1"
 ```
 
-**Parâmetros do Body (Procedimento com Exames):**
-```
-agenda_id=30
-data_agendamento=2025-09-10
-hora_agendamento=08:00
-paciente_id=1
-convenio_id=24
-tipo_consulta=primeira_vez
-observacoes=Suspeita de lesão no joelho
-exames[]=31&exames[]=32
+**Exemplo de Requisição (Procedimento com Exames):**
+```bash
+curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_agendamento.php" \
+  -d "agenda_id=30" \
+  -d "data_agendamento=2025-09-10" \
+  -d "horario_agendamento=08:00" \
+  -d "paciente_id=1" \
+  -d "convenio_id=24" \
+  -d "tipo_consulta=primeira_vez" \
+  -d "usar_paciente_existente=true" \
+  -d "nome_paciente=Maria Santos" \
+  -d "telefone_paciente=(84) 98888-8888" \
+  -d "observacoes=Suspeita de lesão no joelho" \
+  -d "exames_ids=31,32"
 ```
 
-**Exemplo de Resposta (Sucesso):**
+**Exemplo de Resposta (Sucesso - Consulta):**
 ```json
 {
-  "sucesso": true,
+  "status": "sucesso",
+  "mensagem": "Agendamento realizado com sucesso! Paciente vinculado ao cadastro existente.",
+  "agendamento_id": 276,
+  "numero_agendamento": "AGD-0021",
+  "agenda": {
+    "agenda_id": 84,
+    "tipo_agenda": "consulta",
+    "medico": "CAMILO DE PAIVA CANTIDIO",
+    "especialidade": "Cardiologista",
+    "unidade": "Mossoró"
+  },
+  "paciente_id": 636200,
+  "paciente_nome": "YAGO MERCHAN KAMIMURA",
+  "paciente_telefone": "(84) 98888-8888",
+  "tipo_operacao": "paciente_existente",
+  "paciente_cadastrado": false,
+  "paciente_existente_usado": true,
+  "agendamento_sem_cadastro": false,
+  "endereco_salvo": false,
+  "exames_ids": [],
+  "exames_quantidade": 0,
+  "exames_selecionados": false,
+  "horario_agendamento": "14:30:00",
+  "data_agendamento": "2025-10-21",
+  "tipo": "AGENDAMENTO",
+  "data_criacao": "2025-10-13 09:43:19",
+  "auditoria_registrada": "nao",
+  "usuario_criacao": "SISTEMA_WEB"
+}
+```
+
+**Exemplo de Resposta (Sucesso - Procedimento):**
+```json
+{
+  "status": "sucesso",
   "mensagem": "Agendamento realizado com sucesso!",
-  "numero_agendamento": 2415002,
-  "detalhes": {
-    "paciente": "João Silva Santos",
-    "data": "2025-09-10",
-    "hora": "08:00",
-    "medico": "Dr. João Silva",
-    "especialidade": "Cardiologia"
-  }
+  "agendamento_id": 277,
+  "numero_agendamento": "AGD-0022",
+  "agenda": {
+    "agenda_id": 30,
+    "tipo_agenda": "procedimento",
+    "procedimento": "Ressonância Magnética",
+    "medico": "Dr. Silva Santos",
+    "unidade": "Zona Norte"
+  },
+  "paciente_id": 636200,
+  "paciente_nome": "MARIA SANTOS",
+  "paciente_telefone": "(84) 99999-9999",
+  "exames_ids": [31, 32, 33],
+  "exames_quantidade": 3,
+  "exames_selecionados": true,
+  "horario_agendamento": "08:00:00",
+  "data_agendamento": "2025-10-25",
+  "tipo": "AGENDAMENTO"
 }
 ```
 
@@ -855,16 +1177,26 @@ GET /consultar_precos.php?especialidade_id={id}&convenio_id={id}&unidade_id={id}
 
 ---
 
-### Cadastrar Paciente
+### Cadastrar Paciente ✅ TESTADO
 Permite cadastro completo de novos pacientes com validações automáticas.
 
 **Requisição:**
 ```http
 POST /cadastrar_paciente.php
 Content-Type: application/json
+Authorization: Bearer {token}
 ```
 
-**Body:**
+**Body (campos obrigatórios):**
+```json
+{
+  "nome": "João Silva Santos",
+  "data_nascimento": "1990-01-01",
+  "telefone": "(84) 99999-9999"
+}
+```
+
+**Body (completo com opcionais):**
 ```json
 {
   "nome": "João Silva Santos",
@@ -873,66 +1205,93 @@ Content-Type: application/json
   "telefone": "(84) 99999-9999",
   "email": "joao@email.com",
   "endereco": "Rua Principal, 123",
+  "cep": "59600-000",
   "cidade": "Mossoró",
-  "estado": "RN"
+  "estado": "RN",
+  "nome_mae": "Maria Silva",
+  "rg": "1234567",
+  "profissao": "Analista",
+  "sexo": "M"
 }
 ```
 
-**Exemplo de Resposta:**
+**Exemplo de Resposta (201 Created):**
 ```json
 {
   "status": "sucesso",
   "message": "Paciente cadastrado com sucesso",
   "paciente": {
-    "id": 622690,
-    "nome": "João Silva Santos",
-    "cpf": "123.456.789-01",
-    "data_cadastro": "2025-09-29 14:30:00"
+    "id": 634794,
+    "nome": "MARIA SANTOS TESTE POSTMAN",
+    "cpf": "",
+    "data_nascimento": "1988-12-25",
+    "telefone": "84988887777",
+    "email": "",
+    "data_cadastro": "2025-10-06 10:14:40"
   }
+}
+```
+
+**Resposta de Conflito (409):**
+```json
+{
+  "error": "Conflict",
+  "message": "CPF já cadastrado",
+  "paciente_existente_id": 622684
 }
 ```
 
 ---
 
-### Consultar Unidades
+### Consultar Unidades ✅ TESTADO
 Fornece informações detalhadas das unidades incluindo especialidades, médicos e horários.
 
 **Requisição:**
 ```http
-GET /consultar_unidades.php?unidade_id={id}&ativa_apenas=true
+GET /consultar_unidades.php?ativa_apenas=true
+Authorization: Bearer {token}
 ```
 
 **Parâmetros de Query:**
 - `unidade_id` (integer, opcional): ID específico da unidade
 - `ativa_apenas` (boolean, opcional): Apenas unidades ativas (default: true)
 
-**Exemplo de Resposta:**
+**Exemplo de Resposta Real (200 OK):**
 ```json
 {
   "status": "sucesso",
-  "unidade": {
-    "id": 1,
-    "nome": "Mossoró",
-    "endereco": "Rua Principal, 123",
-    "telefone": "(84) 3421-1234",
-    "servicos": {
-      "especialidades": [
-        {"id": 1, "nome": "Cardiologia"}
-      ],
-      "procedimentos": [
-        {"id": 34, "nome": "Ressonância Magnética"}
-      ]
-    },
-    "horario_funcionamento": {
-      "geral": {
-        "inicio": "07:00",
-        "fim": "17:00"
+  "total_unidades": 11,
+  "filtros": {
+    "ativa_apenas": true
+  },
+  "unidades": [
+    {
+      "id": 13,
+      "nome": "Alto do Rodrigues",
+      "endereco": "Av. Ângelo Varela, 499 - Centro, 59507-000 Alto do Rodrigues/RN | Telefone: (84) 3315-6900",
+      "cnpj": "50.832.006/0001-01",
+      "ativo": true,
+      "horario_funcionamento": {
+        "por_dia": []
       },
-      "por_dia": {
-        "SEGUNDA": [{"inicio": "07:00", "fim": "17:00"}]
+      "servicos": {
+        "especialidades": [
+          {"id": 6, "nome": "Cardiologista"},
+          {"id": 5, "nome": "Clínico Geral"},
+          {"id": 10, "nome": "Endocrinologista"}
+        ],
+        "procedimentos": [],
+        "total_especialidades": 9,
+        "total_procedimentos": 0
+      },
+      "medicos": {
+        "lista": [
+          {"id": 2857, "nome": "DR. ANTONIO MARCOS", "crm": "7654"}
+        ],
+        "total": 5
       }
     }
-  }
+  ]
 }
 ```
 
@@ -976,43 +1335,86 @@ GET /consultar_preparos.php?exame_id={id}&procedimento_id={id}&busca={termo}
 
 ---
 
-### Agendamentos por Paciente
+### Agendamentos por Paciente ✅ TESTADO
 Facilita confirmações, cancelamentos e reagendamentos com histórico completo.
 
 **Requisição:**
 ```http
-GET /consultar_agendamentos_paciente.php?paciente_id={id}&cpf={cpf}&status={status}
+GET /consultar_agendamentos_paciente.php?paciente_id=153738
+Authorization: Bearer {token}
 ```
 
 **Parâmetros de Query:**
-- `paciente_id` (integer, opcional): ID do paciente
-- `cpf` (string, opcional): CPF do paciente
-- `status` (string, opcional): Filtrar por status
+- `paciente_id` (integer, obrigatório se não informar cpf): ID do paciente
+- `cpf` (string, obrigatório se não informar paciente_id): CPF do paciente
+- `status` (string, opcional): Filtrar por status (AGENDADO, CONFIRMADO, CANCELADO)
 - `data_inicio` (string, opcional): Data inicial (YYYY-MM-DD)
 - `data_fim` (string, opcional): Data final (YYYY-MM-DD)
+- `limite` (integer, opcional): Limite de registros (default: 50)
 
-**Exemplo de Resposta:**
+**Exemplo de Resposta Real (200 OK):**
 ```json
 {
   "status": "sucesso",
-  "paciente": {
-    "nome": "João Silva Santos",
-    "cpf": "123.456.789-01"
+  "paciente": null,
+  "total_agendamentos": 1,
+  "filtros_aplicados": {
+    "paciente_id": 153738,
+    "status": null,
+    "data_inicio": null,
+    "data_fim": null,
+    "limite": 50
   },
-  "agendamentos": [{
-    "id": 123,
-    "numero": 2415001,
-    "data": "2025-09-10",
-    "horario": "08:00",
-    "status": "AGENDADO",
-    "especialidade": {"nome": "Cardiologia"},
-    "unidade": {"nome": "Mossoró"},
-    "acoes_permitidas": {
-      "pode_cancelar": true,
-      "pode_reagendar": true,
-      "pode_confirmar": true
+  "agendamentos": [
+    {
+      "id": 266,
+      "numero": 0,
+      "data": "2025-09-18",
+      "horario": "06:30:00",
+      "status": "CONFIRMADO",
+      "tipo_consulta": "primeira_vez",
+      "tipo_agendamento": "NORMAL",
+      "observacoes": "",
+      "confirmado": true,
+      "ordem_chegada": null,
+      "hora_chegada": null,
+      "data_criacao": "2025-09-10 09:15:57",
+      "usuario_criacao": null,
+      "agenda": {
+        "id": 30,
+        "tipo": "procedimento",
+        "sala": "",
+        "telefone": "(84) 99818-6138"
+      },
+      "unidade": {
+        "nome": "Mossoró",
+        "endereco": "Rua: Juvenal Lamartine, 119 - Centro, 59600-155 Mossoró/RN | Telefone: (84) 3315-6900"
+      },
+      "medico": {
+        "nome": "",
+        "crm": ""
+      },
+      "especialidade": {
+        "nome": ""
+      },
+      "procedimento": {
+        "nome": "Ressonância Magnética"
+      },
+      "convenio": {
+        "nome": "OITAVA ROSADO MOSSORO"
+      },
+      "exames": [],
+      "ordem_servico": {
+        "tem_os": false,
+        "numero": null
+      },
+      "acoes_permitidas": {
+        "pode_cancelar": false,
+        "pode_reagendar": true,
+        "pode_confirmar": false
+      }
     }
-  }]
+  ]
 }
 ```
 
@@ -1169,6 +1571,15 @@ curl -X POST "/processar_noshow.php" \
 
 ## Changelog
 
+### v2.3 (06 Outubro 2025) - 🔧 **Correção de Estrutura de Banco**
+- ✅ **CORREÇÃO CRÍTICA:** Mapeamento correto de todas as colunas do banco Firebird
+- ✅ **TESTE COMPLETO:** Todos os 3 endpoints testados e aprovados (100% funcionando)
+- ✅ **CORREÇÃO:** `consultar_unidades.php` - Colunas AGENDA_ATI, ID corrigidas
+- ✅ **CORREÇÃO:** `cadastrar_paciente.php` - Mapeamento IDPACIENTE, PACIENTE, ANIVERSARIO, FONE1
+- ✅ **CORREÇÃO:** `consultar_agendamentos_paciente.php` - JOINs e colunas corrigidos
+- ✅ **MELHORIA:** Operador `??` para valores null
+- ✅ **VALIDAÇÃO:** Endpoint retorna dados reais do banco com sucesso
+
 ### v2.2 (06 Outubro 2025) - 🔐 **Correção de Autenticação**
 - ✅ **CORREÇÃO CRÍTICA:** Autenticação corrigida em `consultar_unidades.php`
 - ✅ **CORREÇÃO CRÍTICA:** Autenticação corrigida em `cadastrar_paciente.php`
@@ -1227,6 +1638,7 @@ Isso garante:
 
 Para dúvidas sobre a API, entre em contato com a equipe de desenvolvimento.
 
-**Versão da API:** 2.2
+**Versão da API:** 2.3
 **Última atualização:** 06 Outubro 2025
+**Status:** ✅ Testada e Funcionando 100%
 **Otimizada para:** 🤖 Agentes de IA
