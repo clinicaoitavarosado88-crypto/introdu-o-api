@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Auditoria de Movimentação Completa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>🧪 Teste Completo - Auditoria de Movimentação</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📋 Teste de Movimentação</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="btnTestarMovimento" class="btn btn-primary">
+                            🔄 Testar Movimentação com Auditoria
+                        </button>
+                        
+                        <div id="resultadoTeste" class="mt-3"></div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5>📊 Últimas Movimentações</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="btnVerAuditoria" class="btn btn-secondary">
+                            🔍 Ver Auditoria de Movimentações
+                        </button>
+                        
+                        <div id="auditoriaResultados" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📝 Log de Testes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="logContainer" style="height: 400px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px;">
+                            <div class="text-success">✅ Sistema de testes carregado</div>
+                            <div class="text-info">ℹ️ Pronto para testar movimentações</div>
+                        </div>
+                        
+                        <button id="btnLimparLog" class="btn btn-sm btn-outline-secondary mt-2">
+                            🧹 Limpar Log
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5>📝 O que está sendo testado:</h5>
+                    <ul class="mb-0">
+                        <li><strong>Backend PHP:</strong> Captura completa de dados antes/depois da movimentação</li>
+                        <li><strong>Sistema de Auditoria:</strong> Registro detalhado com 31 campos expandidos</li>
+                        <li><strong>Frontend JavaScript:</strong> Logs detalhados no console do navegador</li>
+                        <li><strong>Rastreamento:</strong> IP, usuário, browser, tempo de execução, transação única</li>
+                        <li><strong>Dados Específicos:</strong> Paciente, convênio, exames, horários origem/destino</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logContainer;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            logContainer = document.getElementById('logContainer');
+            
+            // Interceptar logs do console para mostrar na interface
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                adicionarLog('INFO', args.join(' '), 'text-info');
+            };
+            
+            console.error = function(...args) {
+                originalError.apply(console, args);
+                adicionarLog('ERROR', args.join(' '), 'text-danger');
+            };
+            
+            // Event listeners
+            document.getElementById('btnTestarMovimento').addEventListener('click', testarMovimentacao);
+            document.getElementById('btnVerAuditoria').addEventListener('click', buscarAuditoria);
+            document.getElementById('btnLimparLog').addEventListener('click', limparLog);
+        });
+
+        function adicionarLog(tipo, mensagem, classe) {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = classe;
+            div.innerHTML = `[${timestamp}] ${tipo}: ${mensagem}`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        async function testarMovimentacao() {
+            const btn = document.getElementById('btnTestarMovimento');
+            const resultado = document.getElementById('resultadoTeste');
+            
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Testando...';
+            resultado.innerHTML = '';
+            
+            try {
+                adicionarLog('TEST', 'Iniciando teste de movimentação...', 'text-primary');
+                
+                // Simular dados de movimentação
+                const dadosMovimento = {
+                    agendamento_id: 151, // ID que sabemos que existe
+                    nova_data: '2025-08-17',
+                    nova_hora: '10:30'
+                };
+                
+                adicionarLog('TEST', `Movendo agendamento ${dadosMovimento.agendamento_id} para ${dadosMovimento.nova_data} ${dadosMovimento.nova_hora}`, 'text-info');
+                
+                const response = await fetch('mover_agendamento.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosMovimento)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'sucesso') {
+                    adicionarLog('SUCCESS', 'Movimentação realizada com sucesso!', 'text-success');
+                    adicionarLog('AUDIT', `Auditoria registrada: ${data.detalhes.auditoria_registrada}`, 'text-success');
+                    
+                    resultado.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>✅ Teste Realizado com Sucesso</h6>
+                            <p><strong>Paciente:</strong> ${data.detalhes.paciente}</p>
+                            <p><strong>De:</strong> ${data.detalhes.horario_anterior}</p>
+                            <p><strong>Para:</strong> ${data.detalhes.horario_novo}</p>
+                            <p><strong>Usuário:</strong> ${data.detalhes.usuario}</p>
+                            <p><strong>Auditoria:</strong> ${data.detalhes.auditoria_registrada === 'sim' ? '✅ Registrada' : '❌ Falhou'}</p>
+                        </div>
+                    `;
+                } else {
+                    adicionarLog('ERROR', `Falha na movimentação: ${data.mensagem}`, 'text-danger');
+                    
+                    resultado.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h6>❌ Falha no Teste</h6>
+                            <p>${data.mensagem}</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                adicionarLog('ERROR', `Erro na requisição: ${error.message}`, 'text-danger');
+                
+                resultado.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>💥 Erro de Rede</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Testar Movimentação com Auditoria';
+            }
+        }
+
+        async function buscarAuditoria() {
+            const btn = document.getElementById('btnVerAuditoria');
+            const resultado = document.getElementById('auditoriaResultados');
+            
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Carregando...';
+            resultado.innerHTML = '';
+            
+            try {
+                adicionarLog('AUDIT', 'Buscando registros de auditoria...', 'text-primary');
+                
+                const response = await fetch('consultar_auditoria.php?limit=5&acao=MOVER');
+                const data = await response.json();
+                
+                if (data.status === 'sucesso') {
+                    adicionarLog('AUDIT', `Encontrados ${data.total_registros} registros de movimentação`, 'text-success');
+                    
+                    let html = `
+                        <div class="alert alert-info">
+                            <h6>📊 Últimas Movimentações (${data.total_registros})</h6>
+                        </div>
+                    `;
+                    
+                    data.historico.forEach((item, index) => {
+                        html += `
+                            <div class="card mb-2">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">🔄 Movimentação #${item.ID}</h6>
+                                    <p class="card-text">
+                                        <strong>Paciente:</strong> ${item.PACIENTE_NOME}<br>
+                                        <strong>Data:</strong> ${item.DATA_ACAO}<br>
+                                        <strong>Usuário:</strong> ${item.USUARIO}<br>
+                                        <strong>IP:</strong> ${item.IP_USUARIO}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    resultado.innerHTML = html;
+                } else {
+                    adicionarLog('ERROR', 'Falha ao buscar auditoria', 'text-danger');
+                    resultado.innerHTML = '<div class="alert alert-warning">Nenhum registro encontrado</div>';
+                }
+                
+            } catch (error) {
+                adicionarLog('ERROR', `Erro ao buscar auditoria: ${error.message}`, 'text-danger');
+                resultado.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔍 Ver Auditoria de Movimentações';
+            }
+        }
+
+        function limparLog() {
+            logContainer.innerHTML = '<div class="text-success">✅ Log limpo</div>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+{
+	"info": {
+		"_postman_id": "buscar-horarios-api",
+		"name": "Clínica Oitava - Buscar Horários Disponíveis",
+		"description": "Collection para testar o endpoint de busca de horários disponíveis. Inclui testes com agendas configuradas e sem configuração, diferentes dias da semana e validação de vagas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Verificar Configuração de Horários",
+			"item": [
+				{
+					"name": "Verificar Agenda - Com Horários",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/verificar_agenda_horarios.php?agenda_id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"verificar_agenda_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda (tente IDs diferentes: 1, 2, 30, 33, 48, etc)"
+								}
+							]
+						},
+						"description": "Verifica se uma agenda possui horários configurados na tabela AGENDA_HORARIOS. Retorna todos os dias cadastrados com horários e vagas."
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Agenda - Sem Horários",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/verificar_agenda_horarios.php?agenda_id=30",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"verificar_agenda_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "30",
+									"description": "Agenda sem horários configurados"
+								}
+							]
+						},
+						"description": "Testa uma agenda que NÃO possui horários configurados. Deve retornar total_registros: 0"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para verificar se uma agenda possui horários configurados antes de buscar horários disponíveis"
+		},
+		{
+			"name": "2. Buscar Horários - Casos de Sucesso",
+			"item": [
+				{
+					"name": "Horários Disponíveis - Segunda-feira",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data no formato YYYY-MM-DD (Segunda-feira)"
+								}
+							]
+						},
+						"description": "Busca horários disponíveis para uma segunda-feira. Se a agenda tiver horários configurados, retorna array com horários disponíveis e ocupados."
+					},
+					"response": []
+				},
+				{
+					"name": "Horários Disponíveis - Terça-feira",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-14",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-14",
+									"description": "Data no formato YYYY-MM-DD (Terça-feira)"
+								}
+							]
+						},
+						"description": "Busca horários disponíveis para uma terça-feira"
+					},
+					"response": []
+				},
+				{
+					"name": "Horários Disponíveis - Sexta-feira",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-17",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-17",
+									"description": "Data no formato YYYY-MM-DD (Sexta-feira)"
+								}
+							]
+						},
+						"description": "Busca horários disponíveis para uma sexta-feira"
+					},
+					"response": []
+				},
+				{
+					"name": "Horários Disponíveis - Sábado",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-18",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-18",
+									"description": "Data no formato YYYY-MM-DD (Sábado)"
+								}
+							]
+						},
+						"description": "Busca horários disponíveis para um sábado. Muitas agendas não funcionam aos sábados."
+					},
+					"response": []
+				}
+			],
+			"description": "Testes com agendas que POSSUEM horários configurados"
+		},
+		{
+			"name": "3. Buscar Horários - Casos de Erro",
+			"item": [
+				{
+					"name": "Erro - Agenda Sem Horários (404)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=30&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "30",
+									"description": "Agenda sem horários configurados"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data no formato YYYY-MM-DD"
+								}
+							]
+						},
+						"description": "Testa agenda que NÃO possui horários configurados. Deve retornar HTTP 404 com mensagem descritiva informando que a agenda não possui horários configurados para aquele dia."
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Parâmetros Faltando",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								}
+							]
+						},
+						"description": "Testa chamada sem o parâmetro obrigatório 'data'. Deve retornar array vazio ou erro."
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Data Inválida",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-13-45",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-13-45",
+									"description": "Data inválida (mês 13, dia 45)"
+								}
+							]
+						},
+						"description": "Testa com data inválida. Deve retornar erro ou array vazio."
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Agenda Inexistente",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=99999&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "99999",
+									"description": "ID que provavelmente não existe"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data válida"
+								}
+							]
+						},
+						"description": "Testa com ID de agenda que não existe no banco. Deve retornar erro 404."
+					},
+					"response": []
+				}
+			],
+			"description": "Testes de casos de erro e validações"
+		},
+		{
+			"name": "4. Buscar Horários - Diferentes Agendas",
+			"item": [
+				{
+					"name": "Agenda 1 - Hoje",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "Agenda 1"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data de hoje"
+								}
+							]
+						},
+						"description": "Busca horários da Agenda 1"
+					},
+					"response": []
+				},
+				{
+					"name": "Agenda 2 - Hoje",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=2&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "2",
+									"description": "Agenda 2"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data de hoje"
+								}
+							]
+						},
+						"description": "Busca horários da Agenda 2"
+					},
+					"response": []
+				},
+				{
+					"name": "Agenda 33 - Hoje",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=33&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "33",
+									"description": "Agenda 33"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data de hoje"
+								}
+							]
+						},
+						"description": "Busca horários da Agenda 33"
+					},
+					"response": []
+				},
+				{
+					"name": "Agenda 48 - Hoje",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=48&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "48",
+									"description": "Agenda 48"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13",
+									"description": "Data de hoje"
+								}
+							]
+						},
+						"description": "Busca horários da Agenda 48"
+					},
+					"response": []
+				}
+			],
+			"description": "Testes com diferentes IDs de agenda"
+		},
+		{
+			"name": "5. Respostas Esperadas - Exemplos",
+			"item": [
+				{
+					"name": "📘 Exemplo - Sucesso com Horários",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13"
+								}
+							]
+						},
+						"description": "EXEMPLO DE RESPOSTA ESPERADA (HTTP 200):\n\n```json\n{\n  \"horarios\": [\n    {\n      \"hora\": \"08:00\",\n      \"disponivel\": true\n    },\n    {\n      \"hora\": \"08:30\",\n      \"disponivel\": false\n    },\n    {\n      \"hora\": \"09:00\",\n      \"disponivel\": true\n    }\n  ],\n  \"info_vagas\": {\n    \"limite_total\": 20,\n    \"ocupadas\": 5,\n    \"disponiveis\": 15\n  },\n  \"info_encaixes\": {\n    \"limite_total\": 5,\n    \"ocupados\": 1,\n    \"disponiveis\": 4\n  },\n  \"debug\": {\n    \"agenda_id\": \"1\",\n    \"data\": \"2025-10-13\",\n    \"dia_semana\": \"Segunda\",\n    \"tempo_estimado_minutos\": 20,\n    \"horario_funcionamento\": {\n      \"manha_inicio\": \"08:00:00\",\n      \"manha_fim\": \"12:00:00\",\n      \"tarde_inicio\": \"14:00:00\",\n      \"tarde_fim\": \"18:00:00\",\n      \"funcionamento_continuo\": false\n    },\n    \"total_horarios_gerados\": 24,\n    \"horarios_ocupados_count\": 5,\n    \"bloqueios_horario_count\": 0\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "📕 Exemplo - Erro 404 Sem Horários",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=30&data=2025-10-13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "30"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-13"
+								}
+							]
+						},
+						"description": "EXEMPLO DE RESPOSTA ESPERADA (HTTP 404):\n\n```json\n{\n  \"erro\": true,\n  \"tipo\": \"horario_nao_configurado\",\n  \"mensagem\": \"Esta agenda não possui horários configurados para Segunda\",\n  \"agenda_id\": \"30\",\n  \"dia_semana\": \"Segunda\",\n  \"data_solicitada\": \"2025-10-13\",\n  \"sugestao\": \"Entre em contato com a clínica ou tente outro dia da semana\",\n  \"horarios\": [],\n  \"info_vagas\": {\n    \"limite_total\": 0,\n    \"ocupadas\": 0,\n    \"disponiveis\": 0\n  },\n  \"info_encaixes\": {\n    \"limite_total\": 0,\n    \"ocupados\": 0,\n    \"disponiveis\": 0\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Exemplos de respostas esperadas para referência"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://sistema.clinicaoitavarosado.com.br/oitava/agenda",
+			"type": "string"
+		}
+	]
+}

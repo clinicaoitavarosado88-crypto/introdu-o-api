@@ -1,0 +1,51 @@
+# Logs
+*.log
+logs/*.log
+*.txt
+debug_*.html
+debug_*.log
+execution_log.txt
+
+# Uploads e anexos
+uploads/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Configuração local (conexão com banco)
+includes/connection.php
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Cache
+cache/
+tmp/
+
+# Arquivos de teste
+test_*.html
+teste_*.html
+teste_*.php
+test_*.php
+*_test.php
+*_teste.php
+
+# Node modules (se houver)
+node_modules/
+
+# Composer
+vendor/
+
+# Configurações específicas
+whatsapp_config.php
+configuracoes.php

@@ -1,0 +1,283 @@
+{
+	"info": {
+		"_postman_id": "consultar-precos-api-v2",
+		"name": "Clínica Oitava - Consultar Preços (Particulares)",
+		"description": "Endpoint para consulta de preços de exames por convênio. IMPORTANTE: Retorna APENAS convênios particulares (que possuem SOCIO='S' OR PIX='S' OR E_CARTAO='S' OR CARTAO_BENEFICIO='S'). Inclui informações de especialidade, cidade do convênio e formas de pagamento aceitas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Consultar Preços - Por Convênio",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "1",
+							"description": "ID do convênio (OBRIGATÓRIO) - ex: 1 = SUS, 24 = Amil, 962 = Particular"
+						}
+					]
+				},
+				"description": "Lista todos os preços de exames disponíveis para um convênio específico"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Por Convênio e Exame",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=24&exame_id=31",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "24",
+							"description": "ID do convênio (ex: 24 = Amil)"
+						},
+						{
+							"key": "exame_id",
+							"value": "31",
+							"description": "ID do exame específico"
+						}
+					]
+				},
+				"description": "Consulta o preço de um exame específico em um convênio"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Por Convênio e Procedimento",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=962&procedimento_id=34",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "962",
+							"description": "ID do convênio (ex: 962 = Particular)"
+						},
+						{
+							"key": "procedimento_id",
+							"value": "34",
+							"description": "ID do grupo de exames/procedimento (IDUNIDADE na tabela LAB_EXAMES)"
+						}
+					]
+				},
+				"description": "Consulta preços de todos os exames de um grupo/procedimento específico"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Busca por Nome",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=1&busca=hemograma",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "1",
+							"description": "ID do convênio"
+						},
+						{
+							"key": "busca",
+							"value": "hemograma",
+							"description": "Termo de busca no nome do exame"
+						}
+					]
+				},
+				"description": "Busca exames por nome (busca parcial, case-insensitive)"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Filtro Completo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=24&procedimento_id=34&busca=ressonancia",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "24",
+							"description": "ID do convênio"
+						},
+						{
+							"key": "procedimento_id",
+							"value": "34",
+							"description": "ID do procedimento/grupo"
+						},
+						{
+							"key": "busca",
+							"value": "ressonancia",
+							"description": "Termo de busca"
+						}
+					]
+				},
+				"description": "Consulta com todos os filtros aplicados (convênio + procedimento + busca)"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - SUS",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "1",
+							"description": "ID do convênio SUS"
+						}
+					]
+				},
+				"description": "Consulta todos os exames disponíveis para o SUS"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Particular",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php?convenio_id=962",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					],
+					"query": [
+						{
+							"key": "convenio_id",
+							"value": "962",
+							"description": "ID do convênio Particular"
+						}
+					]
+				},
+				"description": "Consulta todos os exames disponíveis para Particular"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Preços - Erro (Sem Convênio)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/consultar_precos.php",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"consultar_precos.php"
+					]
+				},
+				"description": "Teste de erro - deve retornar 400 Bad Request pois convenio_id é obrigatório"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://sistema.clinicaoitavarosado.com.br/oitava/agenda",
+			"type": "string"
+		}
+	]
+}

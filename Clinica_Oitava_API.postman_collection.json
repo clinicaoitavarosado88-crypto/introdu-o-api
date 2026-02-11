@@ -1,0 +1,988 @@
+{
+	"info": {
+		"_postman_id": "clinica-oitava-api-2025",
+		"name": "Clínica Oitava Rosado - API",
+		"description": "API REST para sistema de agendamento médico - Otimizada para Agentes de IA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "clinica-oitava"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://sistema.clinicaoitavarosado.com.br/oitava/agenda",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "4P2do9ksh2fQfLtiB10jN2blj5SBksOjGbIOTmQQu3M",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Autenticação",
+			"item": [
+				{
+					"name": "Gerar Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.access_token);",
+									"    pm.environment.set('token', jsonData.access_token);",
+									"    console.log('Token salvo: ' + jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client_name\": \"Postman Test\",\n  \"client_email\": \"postman@test.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/token.php",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "token.php"]
+						},
+						"description": "Gera um novo token de autenticação com validade de 1 ano. O token é automaticamente salvo nas variáveis da collection."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🤖 Endpoints para Agentes IA",
+			"item": [
+				{
+					"name": "Consultar Unidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/consultar_unidades.php?ativa_apenas=true",
+							"host": ["{{base_url}}"],
+							"path": ["consultar_unidades.php"],
+							"query": [
+								{
+									"key": "ativa_apenas",
+									"value": "true",
+									"description": "Filtrar apenas unidades ativas"
+								},
+								{
+									"key": "unidade_id",
+									"value": "1",
+									"description": "ID específico da unidade",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retorna informações completas das unidades incluindo especialidades, médicos e horários de funcionamento."
+					},
+					"response": []
+				},
+				{
+					"name": "Cadastrar Paciente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva Santos\",\n  \"cpf\": \"123.456.789-01\",\n  \"data_nascimento\": \"1990-01-01\",\n  \"telefone\": \"(84) 99999-9999\",\n  \"email\": \"joao@email.com\",\n  \"endereco\": \"Rua Principal, 123\",\n  \"cep\": \"59600-000\",\n  \"cidade\": \"Mossoró\",\n  \"estado\": \"RN\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cadastrar_paciente.php",
+							"host": ["{{base_url}}"],
+							"path": ["cadastrar_paciente.php"]
+						},
+						"description": "Cadastra um novo paciente com validações automáticas. Campos obrigatórios: nome, data_nascimento, telefone."
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Agendamentos do Paciente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/consultar_agendamentos_paciente.php?paciente_id=1&status=AGENDADO",
+							"host": ["{{base_url}}"],
+							"path": ["consultar_agendamentos_paciente.php"],
+							"query": [
+								{
+									"key": "paciente_id",
+									"value": "1",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "cpf",
+									"value": "123.456.789-01",
+									"description": "CPF do paciente",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "AGENDADO",
+									"description": "Filtrar por status (AGENDADO, CONFIRMADO, CANCELADO, etc.)"
+								},
+								{
+									"key": "data_inicio",
+									"value": "2025-09-01",
+									"description": "Data inicial (YYYY-MM-DD)",
+									"disabled": true
+								},
+								{
+									"key": "data_fim",
+									"value": "2025-12-31",
+									"description": "Data final (YYYY-MM-DD)",
+									"disabled": true
+								},
+								{
+									"key": "limite",
+									"value": "50",
+									"description": "Limite de registros",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retorna histórico completo de agendamentos do paciente com ações permitidas (cancelar, reagendar, confirmar)."
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Preços",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/consultar_precos.php?especialidade_id=1&convenio_id=24",
+							"host": ["{{base_url}}"],
+							"path": ["consultar_precos.php"],
+							"query": [
+								{
+									"key": "especialidade_id",
+									"value": "1",
+									"description": "ID da especialidade"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio (obrigatório)"
+								},
+								{
+									"key": "procedimento_id",
+									"value": "34",
+									"description": "ID do procedimento",
+									"disabled": true
+								},
+								{
+									"key": "unidade_id",
+									"value": "1",
+									"description": "ID da unidade",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Consulta valores por especialidade, procedimento e convênio para facilitar cotações."
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Preparos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/consultar_preparos.php?procedimento_id=34",
+							"host": ["{{base_url}}"],
+							"path": ["consultar_preparos.php"],
+							"query": [
+								{
+									"key": "procedimento_id",
+									"value": "34",
+									"description": "ID do procedimento"
+								},
+								{
+									"key": "exame_id",
+									"value": "31",
+									"description": "ID do exame específico",
+									"disabled": true
+								},
+								{
+									"key": "busca",
+									"value": "ressonancia",
+									"description": "Termo de busca livre",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Lista instruções de preparos por exame ou procedimento sem necessidade de agendamento prévio."
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Valores OS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/consultar_valores_os.php?convenio_id=24&exames_ids=31,32",
+							"host": ["{{base_url}}"],
+							"path": ["consultar_valores_os.php"],
+							"query": [
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio (obrigatório)"
+								},
+								{
+									"key": "exames_ids",
+									"value": "31,32",
+									"description": "Lista de IDs de exames separados por vírgula"
+								},
+								{
+									"key": "exame_id",
+									"value": "31",
+									"description": "ID de um exame específico",
+									"disabled": true
+								},
+								{
+									"key": "especialidade_id",
+									"value": "1",
+									"description": "ID da especialidade",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Permite consulta de valores antes de criar Ordem de Serviço para validação de cobertura."
+					},
+					"response": []
+				},
+				{
+					"name": "Processar No-Show",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agendamento_id\": 123,\n  \"observacao\": \"Paciente não compareceu\",\n  \"enviar_notificacao\": true,\n  \"usuario\": \"RECEPCAO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_noshow.php",
+							"host": ["{{base_url}}"],
+							"path": ["processar_noshow.php"]
+						},
+						"description": "Define status específico de falta que aciona automaticamente notificação para a equipe responsável."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📋 Buscar Dados",
+			"item": [
+				{
+					"name": "Buscar Especialidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_especialidades.php?busca=cardio",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_especialidades.php"],
+							"query": [
+								{
+									"key": "busca",
+									"value": "cardio",
+									"description": "Termo de busca"
+								}
+							]
+						},
+						"description": "Retorna lista de especialidades médicas disponíveis."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Médicos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_medicos.php?busca=dr",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_medicos.php"],
+							"query": [
+								{
+									"key": "busca",
+									"value": "dr",
+									"description": "Termo de busca"
+								}
+							]
+						},
+						"description": "Retorna lista de médicos disponíveis."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Convênios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_convenios.php?busca=amil",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_convenios.php"],
+							"query": [
+								{
+									"key": "busca",
+									"value": "amil",
+									"description": "Termo de busca"
+								}
+							]
+						},
+						"description": "Retorna lista de convênios disponíveis."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Paciente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "termo",
+									"value": "João Silva",
+									"description": "Nome, CPF ou data de nascimento"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/buscar_paciente.php",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_paciente.php"]
+						},
+						"description": "Busca pacientes por nome, CPF ou data de nascimento."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Postos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_postos.php?busca=mossoro",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_postos.php"],
+							"query": [
+								{
+									"key": "busca",
+									"value": "mossoro",
+									"description": "Termo de busca"
+								}
+							]
+						},
+						"description": "Retorna lista de postos/unidades."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📅 Agendamento",
+			"item": [
+				{
+					"name": "Listar Agendas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/listar_agendas.php?tipo=consulta&nome=cardiologia",
+							"host": ["{{base_url}}"],
+							"path": ["listar_agendas.php"],
+							"query": [
+								{
+									"key": "tipo",
+									"value": "consulta",
+									"description": "Tipo: consulta ou procedimento"
+								},
+								{
+									"key": "nome",
+									"value": "cardiologia",
+									"description": "Nome da especialidade ou procedimento"
+								},
+								{
+									"key": "cidade",
+									"value": "1",
+									"description": "ID da cidade/unidade",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retorna lista de agendas por tipo (consulta ou procedimento) e nome."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Horários Disponíveis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=1&data=2025-10-15",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_horarios.php"],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-15",
+									"description": "Data no formato YYYY-MM-DD"
+								}
+							]
+						},
+						"description": "Retorna horários disponíveis para uma agenda em uma data específica."
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Vagas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/verificar_vagas.php?agenda_id=1&data=2025-10-15&convenio_id=24",
+							"host": ["{{base_url}}"],
+							"path": ["verificar_vagas.php"],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-15",
+									"description": "Data no formato YYYY-MM-DD"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								}
+							]
+						},
+						"description": "Verifica se há vagas disponíveis para um convênio específico."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Exames da Agenda",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_exames_agenda.php?agenda_id=30",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_exames_agenda.php"],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "30",
+									"description": "ID da agenda de procedimento"
+								}
+							]
+						},
+						"description": "Retorna lista de exames disponíveis para uma agenda de procedimento."
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Agendamento (Consulta)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-15",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "08:00",
+									"description": "Horário HH:MM"
+								},
+								{
+									"key": "paciente_id",
+									"value": "1",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "especialidade_id",
+									"value": "1",
+									"description": "ID da especialidade"
+								},
+								{
+									"key": "observacoes",
+									"value": "Paciente relatou dores no peito",
+									"description": "Observações"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": ["{{base_url}}"],
+							"path": ["processar_agendamento.php"]
+						},
+						"description": "Cria um novo agendamento de consulta."
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Agendamento (Procedimento)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "30",
+									"description": "ID da agenda de procedimento"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-15",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "08:00",
+									"description": "Horário HH:MM"
+								},
+								{
+									"key": "paciente_id",
+									"value": "1",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "exames[]",
+									"value": "31",
+									"description": "ID do exame 1"
+								},
+								{
+									"key": "exames[]",
+									"value": "32",
+									"description": "ID do exame 2"
+								},
+								{
+									"key": "observacoes",
+									"value": "Suspeita de lesão no joelho",
+									"description": "Observações"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": ["{{base_url}}"],
+							"path": ["processar_agendamento.php"]
+						},
+						"description": "Cria um novo agendamento de procedimento com exames."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Agendamentos do Dia",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_agendamentos_dia.php?agenda_id=1&data=2025-10-15",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_agendamentos_dia.php"],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "1",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-15",
+									"description": "Data YYYY-MM-DD"
+								}
+							]
+						},
+						"description": "Retorna todos os agendamentos de uma agenda em uma data específica."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Detalhes do Agendamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_agendamento.php?id=123",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_agendamento.php"],
+							"query": [
+								{
+									"key": "id",
+									"value": "123",
+									"description": "ID do agendamento"
+								}
+							]
+						},
+						"description": "Retorna informações detalhadas de um agendamento específico."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Agendamento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agendamento_id",
+									"value": "123",
+									"description": "ID do agendamento"
+								},
+								{
+									"key": "motivo",
+									"value": "Paciente não pode comparecer",
+									"description": "Motivo do cancelamento"
+								},
+								{
+									"key": "usuario",
+									"value": "ADMIN",
+									"description": "Usuário que está cancelando"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/cancelar_agendamento.php",
+							"host": ["{{base_url}}"],
+							"path": ["cancelar_agendamento.php"]
+						},
+						"description": "Cancela um agendamento existente."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Status do Agendamento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agendamento_id",
+									"value": "123",
+									"description": "ID do agendamento"
+								},
+								{
+									"key": "status",
+									"value": "CONFIRMADO",
+									"description": "Novo status: CONFIRMADO, AGUARDANDO, ATENDIDO, etc."
+								},
+								{
+									"key": "usuario",
+									"value": "RECEPCAO",
+									"description": "Usuário que está atualizando"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/atualizar_status_agendamento.php",
+							"host": ["{{base_url}}"],
+							"path": ["atualizar_status_agendamento.php"]
+						},
+						"description": "Atualiza o status de um agendamento."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📄 Ordem de Serviço",
+			"item": [
+				{
+					"name": "Criar Ordem de Serviço",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idpaciente",
+									"value": "1",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "agendamento_id",
+									"value": "213",
+									"description": "ID do agendamento"
+								},
+								{
+									"key": "idposto",
+									"value": "1",
+									"description": "ID do posto"
+								},
+								{
+									"key": "nm_posto",
+									"value": "Posto Central",
+									"description": "Nome do posto"
+								},
+								{
+									"key": "idmedico",
+									"value": "2780",
+									"description": "ID do médico"
+								},
+								{
+									"key": "nm_medico",
+									"value": "Dr. João Silva",
+									"description": "Nome do médico"
+								},
+								{
+									"key": "idunidade",
+									"value": "1",
+									"description": "ID da unidade"
+								},
+								{
+									"key": "nm_unidade",
+									"value": "Cardiologia",
+									"description": "Nome da unidade"
+								},
+								{
+									"key": "diaexame",
+									"value": "2025-10-15",
+									"description": "Data do exame"
+								},
+								{
+									"key": "usuario",
+									"value": "ADMIN",
+									"description": "Usuário"
+								},
+								{
+									"key": "eh_convenio",
+									"value": "true",
+									"description": "É convênio? (true/false)"
+								},
+								{
+									"key": "idconvenio",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "nm_convenio",
+									"value": "Amil",
+									"description": "Nome do convênio"
+								},
+								{
+									"key": "observacao",
+									"value": "Observações da OS",
+									"description": "Observações"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_ordem_servico.php",
+							"host": ["{{base_url}}"],
+							"path": ["processar_ordem_servico.php"]
+						},
+						"description": "Cria uma nova Ordem de Serviço."
+					},
+					"response": []
+				},
+				{
+					"name": "Adicionar Exames à OS",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "numero_os",
+									"value": "2415001",
+									"description": "Número da OS"
+								},
+								{
+									"key": "exames[0][id]",
+									"value": "31",
+									"description": "ID do exame 1"
+								},
+								{
+									"key": "exames[0][quantidade]",
+									"value": "1",
+									"description": "Quantidade do exame 1"
+								},
+								{
+									"key": "exames[1][id]",
+									"value": "32",
+									"description": "ID do exame 2"
+								},
+								{
+									"key": "exames[1][quantidade]",
+									"value": "2",
+									"description": "Quantidade do exame 2"
+								},
+								{
+									"key": "usuario",
+									"value": "ADMIN",
+									"description": "Usuário"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/adicionar_exames_os.php",
+							"host": ["{{base_url}}"],
+							"path": ["adicionar_exames_os.php"]
+						},
+						"description": "Adiciona exames a uma Ordem de Serviço existente."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar OS do Agendamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buscar_os_agendamento.php?agendamento_id=213",
+							"host": ["{{base_url}}"],
+							"path": ["buscar_os_agendamento.php"],
+							"query": [
+								{
+									"key": "agendamento_id",
+									"value": "213",
+									"description": "ID do agendamento"
+								},
+								{
+									"key": "numero_os",
+									"value": "2415001",
+									"description": "Número da OS",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Busca a Ordem de Serviço de um agendamento."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

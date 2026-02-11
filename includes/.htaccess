@@ -1,0 +1,17 @@
+# ✅ DESABILITAR CACHE PARA ARQUIVOS JAVASCRIPT
+# Garante que o navegador sempre busque a versão mais recente
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js)$">
+        # Desabilita cache completamente
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Sat, 26 Jul 1997 05:00:00 GMT"
+    </FilesMatch>
+</IfModule>
+
+# Desabilita ETag (previne cache baseado em timestamp)
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None

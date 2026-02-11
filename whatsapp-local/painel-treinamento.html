@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Treinamento - Bot WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .panel {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .lista {
+            margin-top: 30px;
+        }
+
+        .item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-content h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .item-content p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-actions button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-card .field {
+            margin-bottom: 10px;
+        }
+
+        .info-card .field label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-card .field span {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Painel de Treinamento - Bot WhatsApp</h1>
+            <p>Configure o conhecimento e comportamento do seu assistente virtual</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="mudarTab('info')">📋 Informações Básicas</button>
+            <button class="tab" onclick="mudarTab('perguntas')">❓ Perguntas Frequentes</button>
+            <button class="tab" onclick="mudarTab('especialidades')">🏥 Especialidades</button>
+            <button class="tab" onclick="mudarTab('conhecimento')">📚 Conhecimento Personalizado</button>
+            <button class="tab" onclick="mudarTab('teste')">🧪 Testar Bot</button>
+        </div>
+
+        <!-- Painel Informações Básicas -->
+        <div id="panel-info" class="panel active">
+            <h2>📋 Informações Básicas da Clínica</h2>
+            <div id="status-info" class="status"></div>
+
+            <div class="form-group">
+                <label>Nome da Clínica</label>
+                <input type="text" id="nome-clinica" placeholder="Ex: Clínica Oitava Rosado">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço</label>
+                <input type="text" id="endereco" placeholder="Ex: Av. Exemplo, 123 - Mossoró/RN">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" id="telefone" placeholder="Ex: (84) 3316-2960">
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="text" id="whatsapp" placeholder="Ex: (84) 98818-6138">
+            </div>
+
+            <div class="form-group">
+                <label>Horário de Funcionamento</label>
+                <input type="text" id="horario" placeholder="Ex: Seg-Sex: 7h-18h, Sáb: 7h-12h">
+            </div>
+
+            <div class="form-group">
+                <label>Email (opcional)</label>
+                <input type="email" id="email" placeholder="Ex: contato@clinica.com.br">
+            </div>
+
+            <button class="btn" onclick="salvarInformacoes()">💾 Salvar Informações</button>
+        </div>
+
+        <!-- Painel Perguntas Frequentes -->
+        <div id="panel-perguntas" class="panel">
+            <h2>❓ Perguntas Frequentes</h2>
+            <div id="status-perguntas" class="status"></div>
+
+            <div class="form-group">
+                <label>Pergunta</label>
+                <input type="text" id="nova-pergunta" placeholder="Ex: Como faço para agendar?">
+            </div>
+
+            <div class="form-group">
+                <label>Resposta</label>
+                <textarea id="nova-resposta" placeholder="Digite a resposta completa que o bot deve dar..."></textarea>
+            </div>
+
+            <button class="btn" onclick="adicionarPergunta()">➕ Adicionar Pergunta</button>
+
+            <div id="lista-perguntas" class="lista"></div>
+        </div>
+
+        <!-- Painel Especialidades -->
+        <div id="panel-especialidades" class="panel">
+            <h2>🏥 Especialidades e Convênios</h2>
+            <div id="status-especialidades" class="status"></div>
+
+            <h3>Adicionar Especialidade</h3>
+            <div class="form-group">
+                <label>Nome da Especialidade</label>
+                <input type="text" id="nova-especialidade" placeholder="Ex: Cardiologia">
+            </div>
+
+            <div class="form-group">
+                <label>Descrição</label>
+                <input type="text" id="desc-especialidade" placeholder="Ex: Cuidados com o coração">
+            </div>
+
+            <button class="btn" onclick="adicionarEspecialidade()">➕ Adicionar Especialidade</button>
+
+            <hr style="margin: 30px 0;">
+
+            <h3>Adicionar Convênio</h3>
+            <div class="form-group">
+                <label>Nome do Convênio</label>
+                <input type="text" id="novo-convenio" placeholder="Ex: Unimed">
+            </div>
+
+            <div class="form-group">
+                <label>Tipo</label>
+                <select id="tipo-convenio">
+                    <option value="privado">Privado</option>
+                    <option value="público">Público</option>
+                    <option value="particular">Particular</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="adicionarConvenio()">➕ Adicionar Convênio</button>
+        </div>
+
+        <!-- Painel Conhecimento Personalizado -->
+        <div id="panel-conhecimento" class="panel">
+            <h2>📚 Conhecimento Personalizado</h2>
+            <p style="color: #666; margin-bottom: 20px;">Adicione informações específicas que o bot deve saber</p>
+            <div id="status-conhecimento" class="status"></div>
+
+            <div class="form-group">
+                <label>Tópico</label>
+                <input type="text" id="topico-conhecimento" placeholder="Ex: Procedimento de Ecocardiograma">
+            </div>
+
+            <div class="form-group">
+                <label>Conteúdo</label>
+                <textarea id="conteudo-conhecimento" placeholder="Digite todas as informações sobre este tópico..."></textarea>
+            </div>
+
+            <button class="btn" onclick="adicionarConhecimento()">➕ Adicionar Conhecimento</button>
+
+            <div id="lista-conhecimento" class="lista"></div>
+        </div>
+
+        <!-- Painel Teste -->
+        <div id="panel-teste" class="panel">
+            <h2>🧪 Testar Bot</h2>
+            <p style="color: #666; margin-bottom: 20px;">Simule conversas com o bot para testar</p>
+
+            <div class="form-group">
+                <label>Mensagem de Teste</label>
+                <input type="text" id="mensagem-teste" placeholder="Digite uma mensagem para testar...">
+            </div>
+
+            <button class="btn" onclick="testarBot()">🚀 Enviar Teste</button>
+            <button class="btn btn-secondary" onclick="limparTeste()" style="margin-left: 10px;">🔄 Limpar Conversa</button>
+
+            <div id="chat-teste" style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 10px; min-height: 300px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://138.197.29.54:3003';
+
+        function mudarTab(nome) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById('panel-' + nome).classList.add('active');
+
+            if (nome === 'perguntas') carregarPerguntas();
+            if (nome === 'conhecimento') carregarConhecimento();
+        }
+
+        function mostrarStatus(painel, tipo, mensagem) {
+            const status = document.getElementById('status-' + painel);
+            status.className = 'status show ' + tipo;
+            status.textContent = mensagem;
+            setTimeout(() => status.classList.remove('show'), 5000);
+        }
+
+        async function salvarInformacoes() {
+            const dados = {
+                nome: document.getElementById('nome-clinica').value,
+                endereco: document.getElementById('endereco').value,
+                telefone: document.getElementById('telefone').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                horario: document.getElementById('horario').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/atualizar-info`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarStatus('info', 'success', '✅ Informações salvas com sucesso!');
+                } else {
+                    mostrarStatus('info', 'error', '❌ Erro ao salvar: ' + result.erro);
+                }
+            } catch (error) {
+                mostrarStatus('info', 'error', '❌ Erro de conexão: ' + error.message);
+            }
+        }
+
+        async function adicionarPergunta() {
+            const pergunta = document.getElementById('nova-pergunta').value;
+            const resposta = document.getElementById('nova-resposta').value;
+
+            if (!pergunta || !resposta) {
+                mostrarStatus('perguntas', 'error', '❌ Preencha todos os campos!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/adicionar-pergunta`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pergunta, resposta })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarStatus('perguntas', 'success', '✅ Pergunta adicionada!');
+                    document.getElementById('nova-pergunta').value = '';
+                    document.getElementById('nova-resposta').value = '';
+                    carregarPerguntas();
+                }
+            } catch (error) {
+                mostrarStatus('perguntas', 'error', '❌ Erro: ' + error.message);
+            }
+        }
+
+        async function carregarPerguntas() {
+            try {
+                const response = await fetch(`${API_URL}/conhecimento`);
+                const conhecimento = await response.json();
+
+                const lista = document.getElementById('lista-perguntas');
+                lista.innerHTML = '';
+
+                conhecimento.perguntas_frequentes.forEach((pf, index) => {
+                    lista.innerHTML += `
+                        <div class="item">
+                            <div class="item-content">
+                                <h3>${pf.pergunta}</h3>
+                                <p>${pf.resposta}</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-danger btn-sm" onclick="removerPergunta(${index})">🗑️ Remover</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Erro ao carregar perguntas:', error);
+            }
+        }
+
+        async function adicionarEspecialidade() {
+            const nome = document.getElementById('nova-especialidade').value;
+            const descricao = document.getElementById('desc-especialidade').value;
+
+            if (!nome || !descricao) {
+                mostrarStatus('especialidades', 'error', '❌ Preencha todos os campos!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/adicionar-especialidade`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, descricao })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarStatus('especialidades', 'success', '✅ Especialidade adicionada!');
+                    document.getElementById('nova-especialidade').value = '';
+                    document.getElementById('desc-especialidade').value = '';
+                }
+            } catch (error) {
+                mostrarStatus('especialidades', 'error', '❌ Erro: ' + error.message);
+            }
+        }
+
+        async function adicionarConvenio() {
+            const nome = document.getElementById('novo-convenio').value;
+            const tipo = document.getElementById('tipo-convenio').value;
+
+            if (!nome) {
+                mostrarStatus('especialidades', 'error', '❌ Preencha o nome do convênio!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/adicionar-convenio`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, tipo })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarStatus('especialidades', 'success', '✅ Convênio adicionado!');
+                    document.getElementById('novo-convenio').value = '';
+                }
+            } catch (error) {
+                mostrarStatus('especialidades', 'error', '❌ Erro: ' + error.message);
+            }
+        }
+
+        async function adicionarConhecimento() {
+            const topico = document.getElementById('topico-conhecimento').value;
+            const conteudo = document.getElementById('conteudo-conhecimento').value;
+
+            if (!topico || !conteudo) {
+                mostrarStatus('conhecimento', 'error', '❌ Preencha todos os campos!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/adicionar-conhecimento`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topico, conteudo })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarStatus('conhecimento', 'success', '✅ Conhecimento adicionado!');
+                    document.getElementById('topico-conhecimento').value = '';
+                    document.getElementById('conteudo-conhecimento').value = '';
+                    carregarConhecimento();
+                }
+            } catch (error) {
+                mostrarStatus('conhecimento', 'error', '❌ Erro: ' + error.message);
+            }
+        }
+
+        async function carregarConhecimento() {
+            try {
+                const response = await fetch(`${API_URL}/conhecimento`);
+                const conhecimento = await response.json();
+
+                const lista = document.getElementById('lista-conhecimento');
+                lista.innerHTML = '';
+
+                conhecimento.conhecimento_personalizado.forEach(cp => {
+                    lista.innerHTML += `
+                        <div class="item">
+                            <div class="item-content">
+                                <h3>${cp.topico}</h3>
+                                <p>${cp.conteudo}</p>
+                                <small style="color: #999;">Adicionado em: ${new Date(cp.data_criacao).toLocaleDateString('pt-BR')}</small>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-danger btn-sm" onclick="removerConhecimento(${cp.id})">🗑️ Remover</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Erro ao carregar conhecimento:', error);
+            }
+        }
+
+        async function testarBot() {
+            const mensagem = document.getElementById('mensagem-teste').value;
+            if (!mensagem) return;
+
+            const chat = document.getElementById('chat-teste');
+
+            // Adicionar mensagem do usuário
+            chat.innerHTML += `
+                <div style="margin-bottom: 15px; text-align: right;">
+                    <div style="display: inline-block; background: #667eea; color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; max-width: 70%;">
+                        ${mensagem}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mensagem-teste').value = '';
+
+            try {
+                const response = await fetch(`${API_URL}/testar-bot`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensagem, usuario: 'teste_painel' })
+                });
+
+                const result = await response.json();
+
+                // Adicionar resposta do bot
+                chat.innerHTML += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: inline-block; background: #e9ecef; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; max-width: 70%;">
+                            ${result.resposta}
+                        </div>
+                    </div>
+                `;
+
+                chat.scrollTop = chat.scrollHeight;
+            } catch (error) {
+                chat.innerHTML += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: inline-block; background: #dc3545; color: white; padding: 10px 15px; border-radius: 15px;">
+                            Erro: ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function limparTeste() {
+            document.getElementById('chat-teste').innerHTML = '';
+            fetch(`${API_URL}/limpar-historico`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: 'teste_painel' })
+            });
+        }
+
+        // Permitir enviar com Enter
+        document.getElementById('mensagem-teste')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') testarBot();
+        });
+    </script>
+</body>
+</html>

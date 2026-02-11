@@ -1,0 +1,717 @@
+{
+	"info": {
+		"_postman_id": "processar-agendamento-api-v1",
+		"name": "Clínica Oitava - Processar Agendamento",
+		"description": "Endpoint para criar novos agendamentos. IMPORTANTE: Aceita AMBOS os formatos de horário: 'hora_agendamento' E 'horario_agendamento'. Collection completa com casos de sucesso, erro e diferentes cenários.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Casos de Sucesso",
+			"item": [
+				{
+					"name": "Agendamento - Paciente Existente (hora_agendamento)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-21",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "11:00",
+									"description": "⭐ Formato NOVO - funciona agora"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200",
+									"description": "ID do paciente existente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio (24 = Amil)"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "usar_paciente_existente",
+									"value": "true",
+									"description": "Usar paciente já cadastrado"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "João Silva Teste",
+									"description": "Nome completo"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 99999-9999",
+									"description": "Telefone de contato"
+								},
+								{
+									"key": "observacoes",
+									"value": "Teste via Postman - hora_agendamento",
+									"description": "Observações opcionais"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Cria agendamento usando PACIENTE EXISTENTE e o formato NOVO de horário (hora_agendamento)"
+					},
+					"response": []
+				},
+				{
+					"name": "Agendamento - Paciente Existente (horario_agendamento)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-22",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "horario_agendamento",
+									"value": "14:30",
+									"description": "Formato ANTIGO - continua funcionando"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200",
+									"description": "ID do paciente existente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "1",
+									"description": "ID do convênio (1 = SUS)"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "retorno",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "usar_paciente_existente",
+									"value": "true",
+									"description": "Usar paciente já cadastrado"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Maria Santos Teste",
+									"description": "Nome completo"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 98888-8888",
+									"description": "Telefone de contato"
+								},
+								{
+									"key": "observacoes",
+									"value": "Teste via Postman - horario_agendamento",
+									"description": "Observações opcionais"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Cria agendamento usando o formato ANTIGO de horário (horario_agendamento) para validar retrocompatibilidade"
+					},
+					"response": []
+				},
+				{
+					"name": "Agendamento - Cadastrar Novo Paciente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-23",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "09:00",
+									"description": "Horário HH:MM"
+								},
+								{
+									"key": "convenio_id",
+									"value": "962",
+									"description": "ID do convênio (962 = Particular)"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "deve_cadastrar_paciente",
+									"value": "true",
+									"description": "Cadastrar novo paciente"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "José da Silva Novo",
+									"description": "Nome completo"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 97777-7777",
+									"description": "Telefone de contato"
+								},
+								{
+									"key": "cpf_paciente",
+									"value": "123.456.789-00",
+									"description": "CPF do paciente"
+								},
+								{
+									"key": "data_nascimento",
+									"value": "1985-03-15",
+									"description": "Data de nascimento YYYY-MM-DD"
+								},
+								{
+									"key": "sexo",
+									"value": "M",
+									"description": "M ou F"
+								},
+								{
+									"key": "email_paciente",
+									"value": "jose.teste@email.com",
+									"description": "E-mail do paciente"
+								},
+								{
+									"key": "observacoes",
+									"value": "Novo paciente - teste Postman",
+									"description": "Observações opcionais"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Cria agendamento E cadastra um NOVO paciente no sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Agendamento - Com Especialidade",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-24",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "10:30",
+									"description": "Horário HH:MM"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "usar_paciente_existente",
+									"value": "true",
+									"description": "Usar paciente existente"
+								},
+								{
+									"key": "especialidade_id",
+									"value": "6",
+									"description": "ID da especialidade (6 = Cardiologista)"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Pedro Alves",
+									"description": "Nome completo"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 96666-6666",
+									"description": "Telefone"
+								},
+								{
+									"key": "observacoes",
+									"value": "Consulta cardiológica - teste",
+									"description": "Observações"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Agendamento especificando a ESPECIALIDADE (para médicos que atendem múltiplas especialidades)"
+					},
+					"response": []
+				},
+				{
+					"name": "Agendamento - Com Exames",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "30",
+									"description": "ID da agenda de procedimento"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-25",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "08:00",
+									"description": "Horário HH:MM"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "tipo_consulta",
+									"value": "primeira_vez",
+									"description": "primeira_vez ou retorno"
+								},
+								{
+									"key": "usar_paciente_existente",
+									"value": "true",
+									"description": "Usar paciente existente"
+								},
+								{
+									"key": "exames_ids",
+									"value": "31,32,33",
+									"description": "IDs dos exames separados por vírgula"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Ana Costa",
+									"description": "Nome completo"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 95555-5555",
+									"description": "Telefone"
+								},
+								{
+									"key": "observacoes",
+									"value": "Exames solicitados pelo Dr. Silva",
+									"description": "Observações"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Agendamento de PROCEDIMENTO com múltiplos exames (formato: IDs separados por vírgula)"
+					},
+					"response": []
+				}
+			],
+			"description": "Requests de sucesso testando diferentes cenários"
+		},
+		{
+			"name": "2. Casos de Erro",
+			"item": [
+				{
+					"name": "Erro - Sem Horário",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84",
+									"description": "ID da agenda"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-21",
+									"description": "Data YYYY-MM-DD"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200",
+									"description": "ID do paciente"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24",
+									"description": "ID do convênio"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Teste Erro",
+									"description": "Nome"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 99999-9999",
+									"description": "Telefone"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Deve retornar erro: 'Horário do agendamento é obrigatório'"
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Horário Formato Inválido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "agenda_id",
+									"value": "84"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-21"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "25:99",
+									"description": "❌ Formato inválido"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Teste Erro"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 99999-9999"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Deve retornar erro: 'Horário inválido' (hora 25, minuto 99 não existem)"
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Sem Agenda ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-21"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "11:00"
+								},
+								{
+									"key": "paciente_id",
+									"value": "636200"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24"
+								},
+								{
+									"key": "nome_paciente",
+									"value": "Teste Erro"
+								},
+								{
+									"key": "telefone_paciente",
+									"value": "(84) 99999-9999"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							]
+						},
+						"description": "Deve retornar erro relacionado a agenda_id inválido"
+					},
+					"response": []
+				},
+				{
+					"name": "Erro - Método GET (não permitido)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/processar_agendamento.php?agenda_id=84&data_agendamento=2025-10-21&hora_agendamento=11:00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"processar_agendamento.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "84"
+								},
+								{
+									"key": "data_agendamento",
+									"value": "2025-10-21"
+								},
+								{
+									"key": "hora_agendamento",
+									"value": "11:00"
+								}
+							]
+						},
+						"description": "Deve retornar erro: 'Método não permitido' (só aceita POST)"
+					},
+					"response": []
+				}
+			],
+			"description": "Requests que devem retornar erro para validar tratamento"
+		},
+		{
+			"name": "3. Verificação de Dados",
+			"item": [
+				{
+					"name": "Ver Logs do Último Agendamento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/consultar_auditoria.php?acao=CRIAR&limit=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"consultar_auditoria.php"
+							],
+							"query": [
+								{
+									"key": "acao",
+									"value": "CRIAR",
+									"description": "Filtrar por ação CRIAR"
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Último registro"
+								}
+							]
+						},
+						"description": "Consulta a auditoria para ver o último agendamento criado"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Horários Disponíveis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buscar_horarios.php?agenda_id=84&data=2025-10-21",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buscar_horarios.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "84"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-21"
+								}
+							]
+						},
+						"description": "Verifica horários disponíveis antes de agendar"
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Vagas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/verificar_vagas.php?agenda_id=84&data=2025-10-21&convenio_id=24",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"verificar_vagas.php"
+							],
+							"query": [
+								{
+									"key": "agenda_id",
+									"value": "84"
+								},
+								{
+									"key": "data",
+									"value": "2025-10-21"
+								},
+								{
+									"key": "convenio_id",
+									"value": "24"
+								}
+							]
+						},
+						"description": "Verifica se há vagas disponíveis para o convênio"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints auxiliares para verificar dados antes/depois do agendamento"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://sistema.clinicaoitavarosado.com.br/oitava/agenda",
+			"type": "string"
+		}
+	]
+}
