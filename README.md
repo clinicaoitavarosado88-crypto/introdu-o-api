@@ -1,466 +1,189 @@
-# 🏥 API Sistema de Agendamento - Clínica Oitava Rosado
+# API Sistema de Agendamento - Clinica Oitava Rosado
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-blue.svg)](https://php.net)
 [![Firebird](https://img.shields.io/badge/Database-Firebird-orange.svg)](https://firebirdsql.org)
-[![API Version](https://img.shields.io/badge/API-v2.5-green.svg)](API_DOCUMENTATION.md)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
+[![API Version](https://img.shields.io/badge/API-v3.0-green.svg)](API_DOCUMENTATION.md)
 
-> Sistema completo de agendamento médico com API REST otimizada para integração com Agentes de IA, chatbots e aplicações web/mobile.
-
----
-
-## 🚀 Visão Geral
-
-API REST completa para gerenciamento de agendamentos médicos, desenvolvida em PHP com banco de dados Firebird. Sistema robusto com autenticação via Bearer Token, validações inteligentes e automações avançadas.
-
-**🌐 URL Base:** `http://sistema.clinicaoitavarosado.com.br/oitava/agenda/`
-
-**📚 Documentação Completa:** [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+API REST para gerenciamento de agendamentos medicos, desenvolvida para integracao com Agentes de IA, chatbots e aplicacoes externas.
 
 ---
 
-## ✨ Funcionalidades Principais
+## URL Base
 
-### 🏥 Sistema de Agendamento
-- ✅ Consultas médicas por especialidade
-- ✅ Procedimentos e exames com múltiplos itens
-- ✅ Controle de vagas por dia da semana
-- ✅ Sistema de encaixes inteligente
-- ✅ Reagendamentos e cancelamentos
-- ✅ Bloqueios de horários (permanente, temporário, dia, horário)
-- ✅ Limites por convênio
+```
+http://sistema.clinicaoitavarosado.com.br/oitava/agenda/
+```
 
-### 👥 Gestão de Pacientes
-- ✅ Cadastro completo com validação de CPF
-- ✅ Busca avançada (nome, CPF, data nascimento, telefone)
-- ✅ Histórico completo de agendamentos
-- ✅ Endereço completo com CEP
-- ✅ Múltiplos telefones
+## Autenticacao
 
-### 📊 Consultas e Relatórios
-- ✅ Listar agendas com horários estruturados (JSON)
-- ✅ Buscar horários disponíveis por agenda
-- ✅ Verificar vagas por convênio
-- ✅ Consultar preços de exames e consultas
-- ✅ Histórico de agendamentos por paciente
-- ✅ Auditoria completa de ações
-
-### 🤖 Otimizado para Agentes de IA
-- ✅ Dados estruturados em JSON puro (sem HTML)
-- ✅ Validações robustas com mensagens descritivas
-- ✅ Campos `agenda` com informações completas no response
-- ✅ Suporte a múltiplos formatos de campos
-- ✅ Encoding UTF-8 garantido
-
----
-
-## 🆕 Novidades - Versão 2.5 (31/10/2025)
-
-### ✨ API 100% JSON
-
-**🎉 TODOS os endpoints da API agora retornam JSON puro!**
-
-1. **listar_agendas.php Convertido para JSON**
-   - ✅ Endpoint principal agora retorna JSON estruturado
-   - ✅ Correção automática de caracteres especiais (º, ª, ç)
-   - ✅ Dados completos: horários, convênios, vagas, observações
-   - ✅ Encoding UTF-8 garantido com fallback inteligente
-   - ✅ Compatível com frameworks JavaScript e mobile
-   - 📄 Doc: [CONVERSAO_API_JSON.md](CONVERSAO_API_JSON.md)
-
-2. **Correções de Encoding**
-   - ✅ Função `corrigirCaracteres()` para bytes corrompidos
-   - ✅ "2º andar" em vez de "2� andar"
-   - ✅ Acentuação correta em todos os campos
-   - ✅ Flag `JSON_INVALID_UTF8_SUBSTITUTE` para máxima compatibilidade
-
-3. **8 Arquivos Convertidos**
-   - ✅ buscar_agendas.php
-   - ✅ buscar_bloqueios.php
-   - ✅ buscar_convenio_ajax.php
-   - ✅ listar_agendados.php
-   - ✅ listar_agendas_ajax.php
-   - ✅ listar_agendas.php ⭐ NOVO
-   - ✅ listar_paginas.php
-   - ✅ verificar_estrutura_tabelas.php
-
-### 📄 Versão 2.4 (13/10/2025)
-
-**Correções Críticas:**
-- ✅ Processar Agendamento aceita `hora_agendamento` E `horario_agendamento`
-- ✅ Buscar Horários com mensagens de erro HTTP 404 descritivas
-- ✅ Consultar Preços usando tabelas corretas
-- ✅ Campo `agenda` completo no response de agendamento
-
----
-
-## 🔐 Autenticação
-
-Sistema de **Bearer Token** com validade de 1 ano:
-
-### Obter Token
+Todas as requisicoes exigem **Bearer Token** no header `Authorization`.
 
 ```bash
+# 1. Obter token
 curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/auth/token.php" \
   -H "Content-Type: application/json" \
-  -d '{
-    "client_name": "Minha Aplicação",
-    "client_email": "contato@app.com"
-  }'
-```
+  -d '{"client_name": "Minha App", "client_email": "contato@app.com"}'
 
-**Resposta:**
-```json
-{
-  "access_token": "OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0",
-  "token_type": "Bearer",
-  "expires_in": 31536000
-}
-```
+# Resposta:
+# { "access_token": "SEU_TOKEN", "token_type": "Bearer", "expires_in": 31536000 }
 
-### Usar Token
-
-Incluir em todas as requisições:
-
-```bash
-curl -H "Authorization: Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0" \
+# 2. Usar token em todas as requisicoes
+curl -H "Authorization: Bearer SEU_TOKEN" \
   "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/buscar_medicos.php"
 ```
 
-**Token de Teste:** `OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0`
+Validade do token: **1 ano**.
 
 ---
 
-## 📋 Endpoints Principais
+## Endpoints Disponiveis
 
-### 🏥 Agendas
+### Agendas e Horarios
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/listar_agendas.php` | GET | **⭐ Listar agendas (JSON)** | ✅ v2.5 |
-| `/listar_agendas_json.php` | GET | Listar agendas (JSON com auth) | ✅ v2.4 |
-| `/buscar_horarios.php` | GET | Buscar horários disponíveis | ✅ v2.4 |
-| `/verificar_vagas.php` | GET | Verificar vagas por convênio | ✅ |
-| `/buscar_info_agenda.php` | GET | Informações completas da agenda | ✅ |
-| `/buscar_exames_agenda.php` | GET | Exames disponíveis para procedimento | ✅ |
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `listar_agendas.php` | GET | Listar agendas por tipo e especialidade |
+| `listar_agendas_json.php` | GET | Listar agendas (JSON estruturado com auth) |
+| `buscar_horarios.php` | GET | Horarios disponiveis por agenda e data |
+| `verificar_vagas.php` | GET | Verificar vagas por convenio |
+| `buscar_info_agenda.php` | GET | Informacoes completas da agenda |
+| `buscar_bloqueios.php` | GET | Bloqueios de horario |
+| `dias_disponiveis.php` | GET | Dias com disponibilidade |
 
-### 📅 Agendamentos
+### Agendamentos
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/processar_agendamento.php` | POST | **Criar agendamento** | ✅ v2.4 |
-| `/buscar_agendamento.php` | GET | Buscar agendamento por ID | ✅ |
-| `/buscar_agendamentos_dia.php` | GET | Listar agendamentos do dia | ✅ |
-| `/cancelar_agendamento.php` | POST | Cancelar agendamento | ✅ |
-| `/atualizar_status_agendamento.php` | POST | Atualizar status | ✅ |
-| `/marcar_chegada.php` | POST | Registrar chegada do paciente | ✅ |
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `processar_agendamento.php` | POST | Criar agendamento |
+| `buscar_agendamento.php` | GET | Detalhes de um agendamento |
+| `buscar_agendamentos_dia.php` | GET | Agendamentos do dia |
+| `editar_agendamento.php` | POST | Editar agendamento |
+| `mover_agendamento.php` | POST | Mover agendamento |
+| `cancelar_agendamento.php` | POST | Cancelar agendamento |
+| `atualizar_status_agendamento.php` | POST | Atualizar status |
+| `marcar_chegada.php` | POST | Registrar chegada |
+| `processar_noshow.php` | POST | Registrar falta |
+| `consultar_agendamentos_paciente.php` | GET | Historico do paciente |
 
-### 👤 Pacientes
+### Pacientes
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/cadastrar_paciente.php` | POST | Cadastrar novo paciente | ✅ v2.3 |
-| `/buscar_paciente.php` | POST | Buscar paciente (nome/CPF/tel) | ✅ |
-| `/consultar_agendamentos_paciente.php` | GET | Histórico de agendamentos | ✅ v2.3 |
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `buscar_paciente.php` | POST | Buscar por nome, CPF ou telefone |
+| `cadastrar_paciente.php` | POST | Cadastrar novo paciente |
+| `validar_paciente.php` | GET | Validar dados do paciente |
 
-### 💰 Preços e Convênios
+### Medicos, Especialidades e Convenios
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/consultar_precos.php` | GET | Consultar preços por convênio | ✅ v2.4 |
-| `/buscar_convenios.php` | GET | Listar convênios | ✅ |
-| `/buscar_especialidades.php` | GET | Listar especialidades | ✅ |
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `buscar_medicos.php` | GET | Listar medicos |
+| `buscar_especialidades.php` | GET | Listar especialidades |
+| `buscar_convenios.php` | GET | Listar convenios |
+| `consultar_unidades.php` | GET | Unidades com especialidades |
+| `consultar_precos.php` | GET | Precos por convenio |
 
-### 🔍 Consultas
+### Exames e Procedimentos
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/buscar_medicos.php` | GET | Listar médicos | ✅ |
-| `/buscar_postos.php` | GET | Listar unidades | ✅ |
-| `/consultar_unidades.php` | GET | Unidades com especialidades | ✅ v2.3 |
-| `/consultar_preparos.php` | GET | Preparos para exames | ✅ |
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `buscar_exames_agenda.php` | GET | Exames de uma agenda |
+| `buscar_procedimentos.php` | GET | Listar procedimentos |
+| `consultar_preparos.php` | GET | Instrucoes de preparo |
+| `buscar_exames_convenio.php` | GET | Exames por convenio |
 
-### 📊 Auditoria
+### Auditoria
 
-| Endpoint | Método | Descrição | Status |
-|----------|--------|-----------|--------|
-| `/consultar_auditoria.php` | GET | Histórico de ações | ✅ |
-| `/buscar_historico_agendamento.php` | GET | Histórico de um agendamento | ✅ |
-
----
-
-## 📦 Collections Postman
-
-Collections prontas para importar no Postman:
-
-| Collection | Arquivo | Requests | Descrição |
-|------------|---------|----------|-----------|
-| **API Completa** | `Clinica_Oitava_API.postman_collection.json` | 45+ | Collection principal |
-| **Processar Agendamento** | `Processar_Agendamento.postman_collection.json` | 12 | Criar agendamentos |
-| **Listar Agendas JSON** | `Listar_Agendas_JSON.postman_collection.json` | 15 | Listar agendas estruturadas |
-| **Buscar Horários** | `Buscar_Horarios.postman_collection.json` | 16 | Horários disponíveis |
-| **Consultar Preços** | `Consultar_Precos.postman_collection.json` | 8 | Preços por convênio |
-
-**Todas as collections incluem:**
-- ✅ Bearer Token pré-configurado
-- ✅ Exemplos de sucesso e erro
-- ✅ Documentação inline
-- ✅ Variáveis de ambiente
+| Endpoint | Metodo | Descricao |
+|----------|--------|-----------|
+| `consultar_auditoria.php` | GET | Historico de acoes |
+| `buscar_historico_agendamento.php` | GET | Historico de um agendamento |
 
 ---
 
-## 🚀 Quick Start
-
-### 1. Obter Token de Autenticação
+## Quick Start - Fluxo de Agendamento
 
 ```bash
-curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/auth/token.php" \
-  -H "Content-Type: application/json" \
-  -d '{"client_name":"Teste","client_email":"teste@email.com"}'
-```
+TOKEN="SEU_TOKEN"
+BASE="http://sistema.clinicaoitavarosado.com.br/oitava/agenda"
 
-### 2. Listar Agendas Disponíveis
+# 1. Listar agendas de cardiologia
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/listar_agendas_json.php?tipo=consulta&nome=Cardiologista"
 
-```bash
-curl -H "Authorization: Bearer SEU_TOKEN" \
-  "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/listar_agendas_json.php?tipo=consulta&nome=Cardiologista"
-```
+# 2. Ver horarios disponiveis
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/buscar_horarios.php?agenda_id=84&data=2026-03-10"
 
-### 3. Buscar Horários Disponíveis
+# 3. Buscar paciente
+curl -X POST -H "Authorization: Bearer $TOKEN" \
+  "$BASE/buscar_paciente.php" -d "termo=Joao Silva"
 
-```bash
-curl -H "Authorization: Bearer SEU_TOKEN" \
-  "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/buscar_horarios.php?agenda_id=84&data=2025-10-21"
-```
-
-### 4. Criar Agendamento
-
-```bash
-curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/processar_agendamento.php" \
+# 4. Criar agendamento
+curl -X POST -H "Authorization: Bearer $TOKEN" \
+  "$BASE/processar_agendamento.php" \
   -d "agenda_id=84" \
-  -d "data_agendamento=2025-10-21" \
+  -d "data_agendamento=2026-03-10" \
   -d "hora_agendamento=11:00" \
   -d "paciente_id=636200" \
   -d "convenio_id=24" \
-  -d "nome_paciente=João Silva" \
+  -d "nome_paciente=Joao Silva" \
   -d "telefone_paciente=(84) 99999-9999" \
   -d "usar_paciente_existente=true"
 ```
 
 ---
 
-## 📖 Exemplos de Response
+## Formato de Resposta
 
-### Listar Agendas (JSON) - v2.5 ⭐ NOVO
-
-```json
-{
-  "status": "sucesso",
-  "tipo": "consulta",
-  "filtro": {
-    "nome": "Cardiologista",
-    "dia": null,
-    "cidade_id": null
-  },
-  "total": 17,
-  "agendas": [
-    {
-      "id": 84,
-      "tipo": "consulta",
-      "nome_display": "Dr(a). CAMILO DE PAIVA CANTIDIO",
-      "unidade": "Mossoró",
-      "sala": "2º andar",
-      "telefone": "(84) 3315-6900",
-      "tempo_estimado_minutos": 20,
-      "possui_retorno": true,
-      "atende_comorbidade": false,
-      "horarios": [
-        {
-          "dia_semana": "Segunda",
-          "turnos": [
-            {
-              "periodo": "manha",
-              "inicio": "08:00",
-              "fim": "11:00"
-            }
-          ],
-          "vagas_dia": 30
-        }
-      ],
-      "vagas_por_dia": {
-        "Segunda": 30,
-        "Quarta": 25
-      },
-      "convenios": [
-        "AMIL",
-        "UNIMED",
-        "SUS",
-        "PARTICULAR"
-      ],
-      "observacoes": "Trazer exames anteriores",
-      "medico": "CAMILO DE PAIVA CANTIDIO",
-      "especialidade": "Cardiologista",
-      "especialidade_id": 6
-    }
-  ]
-}
-```
-
-### Processar Agendamento
+Todos os endpoints retornam **JSON puro** com encoding **UTF-8**.
 
 ```json
 {
   "status": "sucesso",
-  "mensagem": "Agendamento realizado com sucesso!",
-  "agendamento_id": 276,
-  "numero_agendamento": "AGD-0021",
-  "agenda": {
-    "agenda_id": 84,
-    "tipo_agenda": "consulta",
-    "medico": "CAMILO DE PAIVA CANTIDIO",
-    "especialidade": "Cardiologista",
-    "unidade": "Mossoró"
-  },
-  "paciente_id": 636200,
-  "paciente_nome": "YAGO MERCHAN KAMIMURA",
-  "horario_agendamento": "14:30:00",
-  "data_agendamento": "2025-10-21"
+  "dados": { ... }
 }
 ```
 
----
+Erros retornam:
+```json
+{
+  "erro": true,
+  "mensagem": "Descricao do erro"
+}
+```
 
-## 🔧 Estrutura do Banco de Dados
+### Status Codes
 
-### Principais Tabelas
-
-| Tabela | Descrição | Campos Principais |
-|--------|-----------|-------------------|
-| `AGENDAS` | Configuração de agendas | ID, TIPO, MEDICO_ID, PROCEDIMENTO_ID |
-| `AGENDA_HORARIOS` | Horários de funcionamento | AGENDA_ID, DIA_SEMANA, HORARIO_INICIO |
-| `AGENDAMENTOS` | Agendamentos realizados | ID, AGENDA_ID, PACIENTE_ID, DATA |
-| `LAB_PACIENTES` | Cadastro de pacientes | IDPACIENTE, PACIENTE, CPF, FONE1 |
-| `LAB_MEDICOS_PRES` | Cadastro de médicos | ID, NOME |
-| `ESPECIALIDADES` | Especialidades médicas | ID, NOME |
-| `GRUPO_EXAMES` | Grupos de procedimentos | ID, NOME |
-| `LAB_CONVENIOS` | Convênios aceitos | IDCONVENIO, CONVENIO |
-| `CONVENIOS` | Configuração de convênios | ID, NOME |
-
-**Encoding:** Windows-1252 (banco) → UTF-8 (API)
-
----
-
-## 📝 Documentação Adicional
-
-### Correções e Melhorias
-
-- 📄 [CORRECAO_PROCESSAR_AGENDAMENTO.md](CORRECAO_PROCESSAR_AGENDAMENTO.md) - Aceitar múltiplos formatos de horário
-- 📄 [CORRECAO_BUSCAR_HORARIOS.md](CORRECAO_BUSCAR_HORARIOS.md) - Mensagens de erro descritivas
-- 📄 [CONVERSAO_LISTAR_AGENDAS_JSON.md](CONVERSAO_LISTAR_AGENDAS_JSON.md) - HTML → JSON estruturado
-
-### Guias de Implementação
-
-- 📄 [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Documentação completa da API
-- 📄 [IMPLEMENTACAO_ORDEM_SERVICO.md](IMPLEMENTACAO_ORDEM_SERVICO.md) - Sistema de Ordem de Serviço
-- 📄 [MANUAL_WHATSAPP.md](MANUAL_WHATSAPP.md) - Integração WhatsApp
-
-### Release Notes
-
-- 📄 [RELEASE_NOTES_v2.3.md](RELEASE_NOTES_v2.3.md) - Versão 2.3
-- 📄 [CONTRIBUTING.md](CONTRIBUTING.md) - Como contribuir
+| Codigo | Descricao |
+|--------|-----------|
+| 200 | Sucesso |
+| 400 | Requisicao invalida |
+| 401 | Nao autorizado |
+| 404 | Recurso nao encontrado |
+| 409 | Conflito (ex: CPF duplicado) |
+| 500 | Erro interno |
 
 ---
 
-## ⚙️ Requisitos Técnicos
+## Requisitos Tecnicos
 
-- **PHP:** 7.4 ou superior
+- **PHP:** 7.4+
 - **Banco de Dados:** Firebird 2.5+
-- **Extensões PHP:** `php-interbase`, `php-mbstring`, `php-curl`
-- **Servidor Web:** Apache 2.4+ ou Nginx
+- **Extensoes PHP:** php-interbase, php-mbstring, php-curl
 - **Encoding:** UTF-8 (API) / Windows-1252 (Banco)
 
 ---
 
-## 🔒 Segurança
+## Documentacao Completa
 
-- ✅ Autenticação via Bearer Token
-- ✅ Validação de todos os inputs
-- ✅ Prepared statements (proteção SQL Injection)
-- ✅ Rate limiting configurável
-- ✅ CORS habilitado
-- ✅ Logs de auditoria completos
-- ✅ Encoding validation
+Consulte **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** para detalhes de cada endpoint, parametros, exemplos de request/response e fluxos completos.
 
 ---
 
-## 📊 Status dos Endpoints
+## Suporte
 
-| Categoria | Total | JSON | Em Desenvolvimento |
-|-----------|-------|------|-------------------|
-| Agendas | 9 | 9 ✅ | - |
-| Agendamentos | 10 | 10 ✅ | - |
-| Pacientes | 4 | 4 ✅ | - |
-| Preços/Convênios | 5 | 5 ✅ | - |
-| Consultas | 6 | 6 ✅ | - |
-| Auditoria | 2 | 2 ✅ | - |
-| **TOTAL** | **36** | **36 ✅** | **0** |
+- **Telefone:** (84) 3315-6900
+- **Endereco:** Mossoro - RN
 
-**🎉 100% dos endpoints retornam JSON**
-
-**Última atualização:** 31/10/2025
-
----
-
-## 🤝 Suporte
-
-- 📧 **Email:** suporte@clinicaoitavarosado.com.br
-- 📞 **Telefone:** (84) 3315-6900
-- 📍 **Endereço:** Mossoró - RN
-
----
-
-## 📄 Licença
-
-© 2025 Clínica Oitava Rosado. Todos os direitos reservados.
-
-Sistema proprietário desenvolvido para uso exclusivo da Clínica Oitava Rosado.
-
----
-
-## 🏆 Histórico de Versões
-
-### v2.5 (31/10/2025) - Current ⭐
-- 🎉 **API 100% JSON** - Todos os endpoints agora retornam JSON puro
-- ✨ `listar_agendas.php` convertido para JSON estruturado
-- 🔧 Correção automática de caracteres especiais (º, ª, ç)
-- 🛠️ Função `corrigirCaracteres()` para bytes corrompidos do Firebird
-- 📊 8 arquivos convertidos de HTML para JSON
-- 🌐 Encoding UTF-8 garantido com fallback inteligente
-- 📄 Documentação atualizada: [CONVERSAO_API_JSON.md](CONVERSAO_API_JSON.md)
-
-### v2.4 (13/10/2025)
-- ✨ Novo endpoint `listar_agendas_json.php` (JSON estruturado)
-- 🔧 Correção aceitar `hora_agendamento` E `horario_agendamento`
-- 🎁 Campo `agenda` completo no response de agendamento
-- 📝 Mensagens de erro descritivas em `buscar_horarios.php`
-- 📚 5 collections Postman atualizadas
-
-### v2.3 (06/10/2025)
-- ✅ Endpoints para agentes IA 100% funcionais
-- 🔧 Correção estrutura banco de dados
-- 📝 Documentação completa
-
-### v2.0 (Setembro 2025)
-- 🚀 Sistema de agendamento completo
-- 🔐 Autenticação Bearer Token
-- 📊 Auditoria de ações
-
----
-
-<div align="center">
-
-**Desenvolvido com ❤️ pela equipe Clínica Oitava Rosado**
-
-[Documentação](API_DOCUMENTATION.md) • [Postman Collections](/) • [Suporte](mailto:suporte@clinicaoitavarosado.com.br)
-
-</div>
+(c) 2026 Clinica Oitava Rosado. Todos os direitos reservados.
