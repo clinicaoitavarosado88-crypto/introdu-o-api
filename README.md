@@ -2,7 +2,7 @@
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-blue.svg)](https://php.net)
 [![Firebird](https://img.shields.io/badge/Database-Firebird-orange.svg)](https://firebirdsql.org)
-[![API Version](https://img.shields.io/badge/API-v3.1-green.svg)](API_DOCUMENTATION.md)
+[![API Version](https://img.shields.io/badge/API-v3.2-green.svg)](API_DOCUMENTATION.md)
 
 API REST para gerenciamento de agendamentos médicos, desenvolvida para integração com Agentes de IA, chatbots e aplicações externas.
 
@@ -82,7 +82,7 @@ Validade do token: **1 ano**.
 | `buscar_convenios.php` | GET | Listar convênios |
 | `buscar_convenios_agenda.php` | GET | **Convênios e formas de pagamento por agenda** |
 | `consultar_unidades.php` | GET | Unidades com especialidades |
-| `consultar_precos.php` | GET | Preços por convênio |
+| `consultar_precos.php` | GET | **Verificar disponibilidade e preços por convênio** |
 
 ### Exames e Procedimentos
 
@@ -120,13 +120,15 @@ curl -H "Authorization: Bearer $TOKEN" \
 curl -X POST -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_paciente.php" -d "termo=08635709411"
 
-# 4. Consultar convênios e formas de pagamento da agenda
+# 4. Consultar convênios da agenda
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_convenios_agenda.php?agenda_id=84"
 
-# 5. Consultar preço do exame pela forma de pagamento
+# 5. Verificar se exame está disponível no convênio
 curl -H "Authorization: Bearer $TOKEN" \
-  "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
+  "$BASE/consultar_precos.php?convenio_id=7&busca=RM CRANIO"
+# Convênio normal (AMIL): retorna disponivel=true, sem valor
+# Particular/Cartão de Desconto: retorna disponivel=true + valor
 
 # 6. Criar agendamento
 curl -X POST -H "Authorization: Bearer $TOKEN" \
@@ -141,30 +143,36 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
   -d "usar_paciente_existente=true"
 ```
 
-### Fluxo de Preços (Particular e Cartão de Desconto)
+### Verificação de Disponibilidade e Preços
 
 ```bash
 # 1. Buscar convênios da agenda (detecta cidade automaticamente)
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_convenios_agenda.php?agenda_id=84"
-# Retorna categorias: Particular, Cartão de Desconto, etc.
-# Cada categoria com formas de pagamento: Dinheiro, PIX, Cartão Crédito, Débito, Parcelado
-# Cada forma com seu lab_convenio_id para consulta de preço
+# Retorna TODOS os convênios: Amil, Particular, Cartão de Desconto, Cassi, etc.
+# Cada convênio com seu lab_convenio_id
 
-# 2. Paciente escolhe "Particular" + "PIX" -> lab_convenio_id=1665
+# 2. Convênio normal (AMIL, lab_convenio_id=7): verifica disponibilidade
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/consultar_precos.php?convenio_id=7&busca=RM CRANIO"
+# Retorna: disponivel=true (sem valor)
+
+# 3. Particular PIX (lab_convenio_id=1665): retorna com valor
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
-# Retorna: R$ 650,00
+# Retorna: disponivel=true + R$ 650,00
 
-# 3. Paciente escolhe "Particular" + "Cartão Crédito" -> lab_convenio_id=1613
+# 4. Particular Cartão Crédito (lab_convenio_id=1613): retorna com valor
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=1613&busca=RM CRANIO"
-# Retorna: R$ 760,50
+# Retorna: disponivel=true + R$ 760,50
 
-# 4. Paciente escolhe "Cartão de Desconto" + "Dinheiro" -> lab_convenio_id=2118
+# 5. Cartão de Desconto Dinheiro (lab_convenio_id=2118): retorna com valor
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=2118&busca=RM CRANIO"
-# Retorna: R$ 500,00
+# Retorna: disponivel=true + R$ 500,00
+
+# Se total=0: exame NÃO disponível ou inativo naquele convênio
 ```
 
 ---

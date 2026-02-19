@@ -1,6 +1,6 @@
 # API Documentation - Clínica Oitava Rosado
 
-**Versão:** 3.1
+**Versão:** 3.2
 **URL Base:** `http://sistema.clinicaoitavarosado.com.br/oitava/agenda/`
 **Formato:** JSON (UTF-8)
 **Autenticação:** Bearer Token
@@ -16,7 +16,7 @@
   - [Agendamentos](#agendamentos)
   - [Pacientes](#pacientes)
   - [Médicos e Especialidades](#médicos-e-especialidades)
-  - [Convênios, Formas de Pagamento e Preços](#convênios-formas-de-pagamento-e-preços)
+  - [Convênios, Disponibilidade e Preços](#convênios-disponibilidade-e-preços)
   - [Exames e Procedimentos](#exames-e-procedimentos)
   - [Unidades](#unidades)
   - [Auditoria](#auditoria)
@@ -676,7 +676,7 @@ GET /buscar_especialidades.php?busca={termo}
 
 ---
 
-### Convênios, Formas de Pagamento e Preços
+### Convênios, Disponibilidade e Preços
 
 #### Listar Convênios
 
@@ -698,9 +698,9 @@ GET /buscar_convenios.php?busca={termo}
 
 ---
 
-#### Buscar Convênios e Formas de Pagamento da Agenda
+#### Buscar Convênios da Agenda
 
-Retorna as categorias de convênio (Particular, Cartão de Desconto, etc.) e as formas de pagamento disponíveis (Dinheiro, PIX, Cartão Crédito, Débito, Parcelado) com o `lab_convenio_id` correto para consulta de preços.
+Retorna **todos** os convênios vinculados à agenda (normais e particulares), com o `lab_convenio_id` correto por cidade.
 
 A cidade é detectada **automaticamente** a partir da agenda (`AGENDAS.UNIDADE_ID` -> `LAB_CIDADES`).
 
@@ -722,8 +722,25 @@ Authorization: Bearer {token}
   "idlocal": 1,
   "medico": "CAMILO DE PAIVA CANTIDIO",
   "tipo": "consulta",
-  "total_categorias": 3,
+  "total_categorias": 23,
   "categorias": [
+    {
+      "categoria_id": 1,
+      "categoria": "Amil",
+      "tem_opcoes": true,
+      "opcoes": [
+        {
+          "lab_convenio_id": 7,
+          "nome": "AMIL RN- ASSISTENCIA MEDICA INTERNACIONAL",
+          "forma_pagamento": "DINHEIRO",
+          "particular": false,
+          "pix": false,
+          "cartao": false,
+          "cartao_desconto": false,
+          "socio": false
+        }
+      ]
+    },
     {
       "categoria_id": 24,
       "categoria": "Particular",
@@ -758,26 +775,6 @@ Authorization: Bearer {token}
           "cartao": true,
           "cartao_desconto": false,
           "socio": false
-        },
-        {
-          "lab_convenio_id": 1614,
-          "nome": "CARTAO DEBITO MOSSORO",
-          "forma_pagamento": "CARTAO",
-          "particular": true,
-          "pix": false,
-          "cartao": true,
-          "cartao_desconto": false,
-          "socio": false
-        },
-        {
-          "lab_convenio_id": 1615,
-          "nome": "CARTAO PARCELADO MOSSORO",
-          "forma_pagamento": "CARTAO",
-          "particular": true,
-          "pix": false,
-          "cartao": true,
-          "cartao_desconto": false,
-          "socio": false
         }
       ]
     },
@@ -795,59 +792,28 @@ Authorization: Bearer {token}
           "cartao": false,
           "cartao_desconto": true,
           "socio": true
-        },
-        {
-          "lab_convenio_id": 2406,
-          "nome": "PIX CARTAO DE DESCONTO",
-          "forma_pagamento": "PIX",
-          "particular": false,
-          "pix": true,
-          "cartao": false,
-          "cartao_desconto": true,
-          "socio": false
         }
       ]
-    },
-    {
-      "categoria_id": 27,
-      "categoria": "Exército",
-      "tem_opcoes": false,
-      "opcoes": []
     }
   ]
 }
 ```
 
-**Valores do campo `forma_pagamento`:**
+**Convênios normais** (Amil, Cassi, Geap, etc.) retornam com todas as flags `false` — possuem apenas um `lab_convenio_id` por cidade.
 
-| Valor | Descrição |
-|-------|-----------|
-| DINHEIRO | Pagamento em dinheiro |
-| PIX | Pagamento via PIX |
-| CARTAO | Cartão de crédito, débito ou parcelado |
-| CARTAO_DESCONTO | Cartão de desconto (com ou sem cartão) |
-| SOCIO | Sócio/conveniado |
+**Particular e Cartão de Desconto** retornam múltiplas opções por forma de pagamento (Dinheiro, PIX, Crédito, Débito, Parcelado).
 
-**Exemplo de preços para RM CRÂNIO SEM CONTRASTE (Mossoró):**
-
-| Categoria | Forma | lab_convenio_id | Valor |
-|-----------|-------|-----------------|-------|
-| Particular | Dinheiro | 24 | R$ 650,00 |
-| Particular | PIX | 1665 | R$ 650,00 |
-| Particular | Cartão Crédito | 1613 | R$ 760,50 |
-| Particular | Cartão Débito | 1614 | R$ 760,50 |
-| Particular | Cartão Parcelado | 1615 | R$ 760,50 |
-| Cartão Desconto | Dinheiro | 2118 | R$ 500,00 |
-| Cartão Desconto | PIX | 2406 | R$ 500,00 |
-| Cartão Desconto | Crédito | 2403 | R$ 585,00 |
-| Cartão Desconto | Débito | 2404 | R$ 585,00 |
-| Cartão Desconto | Parcelado | 2405 | R$ 585,00 |
+Se `tem_opcoes: false` → convênio ainda não foi vinculado para a cidade da agenda.
 
 ---
 
-#### Consultar Preços
+#### Consultar Disponibilidade e Preços
 
-Usa o `lab_convenio_id` retornado pelo `buscar_convenios_agenda.php` para consultar o preço correto do exame.
+Verifica se um exame está disponível para um convênio. O comportamento muda conforme o tipo de convênio:
+
+- **Particular / Cartão de Desconto**: retorna `disponivel: true` + `valor_unitario` e `valor_formatado`
+- **Convênio normal** (Amil, Cassi, etc.): retorna apenas `disponivel: true`, **sem valor**
+- **Exame inativo ou inexistente**: retorna `total: 0`
 
 ```http
 GET /consultar_precos.php?convenio_id={lab_convenio_id}
@@ -861,7 +827,30 @@ Authorization: Bearer {token}
 | exame_id | integer | Não | ID do exame |
 | procedimento_id | integer | Não | ID do procedimento |
 
-**Exemplo - PIX Mossoró:**
+**Exemplo 1 - Convênio normal (AMIL):**
+```bash
+GET /consultar_precos.php?convenio_id=7&busca=RM CRANIO SEM
+```
+
+**Resposta:**
+```json
+{
+  "status": "sucesso",
+  "total": 1,
+  "convenio_id": 7,
+  "resultados": [
+    {
+      "exame_id": 1875,
+      "exame_nome": "RM CRANIO SEM CONTRASTE",
+      "convenio_id": 7,
+      "convenio_nome": "AMIL RN- ASSISTENCIA MEDICA INTERNACIONAL",
+      "disponivel": true
+    }
+  ]
+}
+```
+
+**Exemplo 2 - Particular PIX (com valor):**
 ```bash
 GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO SEM
 ```
@@ -871,17 +860,49 @@ GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO SEM
 {
   "status": "sucesso",
   "total": 1,
+  "convenio_id": 1665,
   "resultados": [
     {
-      "exame_id": 1234,
-      "nome_exame": "RM CRANIO SEM CONTRASTE",
-      "valor_unitario": 650.00,
+      "exame_id": 1875,
+      "exame_nome": "RM CRANIO SEM CONTRASTE",
       "convenio_id": 1665,
-      "convenio_nome": "PIX MOSSORO"
+      "convenio_nome": "PIX MOSSORO",
+      "disponivel": true,
+      "valor_unitario": 650.00,
+      "valor_formatado": "R$ 650,00"
     }
   ]
 }
 ```
+
+**Exemplo 3 - Exame não disponível no convênio:**
+```json
+{
+  "status": "sucesso",
+  "total": 0,
+  "convenio_id": 999,
+  "resultados": []
+}
+```
+
+**Regra importante:** se `total = 0`, o exame **não está disponível** ou está **inativo** naquele convênio. O bot deve informar ao paciente que o exame não é coberto.
+
+**Tabela de preços - RM CRÂNIO SEM CONTRASTE (Mossoró):**
+
+| Categoria | Forma | lab_convenio_id | Resultado |
+|-----------|-------|-----------------|-----------|
+| Amil | - | 7 | disponível (sem valor) |
+| Cassi | - | 10 | disponível (sem valor) |
+| Particular | Dinheiro | 24 | R$ 650,00 |
+| Particular | PIX | 1665 | R$ 650,00 |
+| Particular | Cartão Crédito | 1613 | R$ 760,50 |
+| Particular | Cartão Débito | 1614 | R$ 760,50 |
+| Particular | Cartão Parcelado | 1615 | R$ 760,50 |
+| Cartão Desconto | Dinheiro | 2118 | R$ 500,00 |
+| Cartão Desconto | PIX | 2406 | R$ 500,00 |
+| Cartão Desconto | Crédito | 2403 | R$ 585,00 |
+| Cartão Desconto | Débito | 2404 | R$ 585,00 |
+| Cartão Desconto | Parcelado | 2405 | R$ 585,00 |
 
 ---
 
@@ -1088,7 +1109,21 @@ O sistema controla vagas por **dia da semana**, não por data:
 6. POST /processar_agendamento.php  (com exames_ids=31,32)
 ```
 
-### Fluxo 3: Consulta de Preços (Particular/Cartão de Desconto)
+### Fluxo 3: Verificar Disponibilidade de Exame no Convênio
+
+```
+1. GET /buscar_convenios_agenda.php?agenda_id=84
+   -> Retorna todos os convênios: Amil (id=7), Particular, Cartão de Desconto, Cassi, etc.
+
+2. Paciente informa convênio: "Tenho AMIL"
+   -> Bot identifica: Amil -> lab_convenio_id = 7
+
+3. GET /consultar_precos.php?convenio_id=7&busca=RM CRANIO
+   -> total > 0: "Sim, RM Crânio está disponível pelo seu convênio AMIL"
+   -> total = 0: "Esse exame não está disponível pelo convênio AMIL"
+```
+
+### Fluxo 4: Consulta de Preços (Particular/Cartão de Desconto)
 
 O preço varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` para obter o `lab_convenio_id` correto.
 
@@ -1104,17 +1139,17 @@ O preço varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php`
    -> Paciente: "PIX" -> lab_convenio_id = 1665
 
 4. GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO
-   -> Retorna: R$ 650,00
+   -> Retorna: disponivel=true + R$ 650,00
 ```
 
-### Fluxo 4: Cancelamento
+### Fluxo 5: Cancelamento
 
 ```
 1. GET /consultar_agendamentos_paciente.php?cpf=123.456.789-01
 2. POST /cancelar_agendamento.php  (agendamento_id + motivo)
 ```
 
-### Fluxo 5: Busca de Paciente por CPF
+### Fluxo 6: Busca de Paciente por CPF
 
 ```
 1. POST /buscar_paciente.php  (termo=08635709411)
@@ -1165,5 +1200,5 @@ O preço varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php`
 
 ---
 
-**Versão:** 3.1
+**Versão:** 3.2
 **Última atualização:** 19 Fevereiro 2026
