@@ -1,34 +1,34 @@
-# API Documentation - Clinica Oitava Rosado
+# API Documentation - Clínica Oitava Rosado
 
-**Versao:** 3.1
+**Versão:** 3.1
 **URL Base:** `http://sistema.clinicaoitavarosado.com.br/oitava/agenda/`
 **Formato:** JSON (UTF-8)
-**Autenticacao:** Bearer Token
+**Autenticação:** Bearer Token
 
 ---
 
-## Indice
+## Índice
 
-- [Autenticacao](#autenticacao)
+- [Autenticação](#autenticação)
 - [Status Codes](#status-codes)
 - [Endpoints](#endpoints)
-  - [Agendas e Horarios](#agendas-e-horarios)
+  - [Agendas e Horários](#agendas-e-horários)
   - [Agendamentos](#agendamentos)
   - [Pacientes](#pacientes)
-  - [Medicos e Especialidades](#medicos-e-especialidades)
-  - [Convenios, Formas de Pagamento e Precos](#convenios-formas-de-pagamento-e-precos)
+  - [Médicos e Especialidades](#médicos-e-especialidades)
+  - [Convênios, Formas de Pagamento e Preços](#convênios-formas-de-pagamento-e-preços)
   - [Exames e Procedimentos](#exames-e-procedimentos)
   - [Unidades](#unidades)
   - [Auditoria](#auditoria)
 - [Estruturas de Dados](#estruturas-de-dados)
-- [Fluxos de Integracao](#fluxos-de-integracao)
+- [Fluxos de Integração](#fluxos-de-integração)
 - [Erros Comuns](#erros-comuns)
 
 ---
 
-## Autenticacao
+## Autenticação
 
-A API utiliza **Bearer Token**. Todas as requisicoes devem incluir o token no header `Authorization`.
+A API utiliza **Bearer Token**. Todas as requisições devem incluir o token no header `Authorization`.
 
 ### Obter Token
 
@@ -40,7 +40,7 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "client_name": "Nome da Aplicacao",
+  "client_name": "Nome da Aplicação",
   "client_email": "contato@aplicacao.com"
 }
 ```
@@ -56,7 +56,7 @@ Content-Type: application/json
 
 ### Usar Token
 
-Header obrigatorio em todas as requisicoes:
+Header obrigatório em todas as requisições:
 
 ```
 Authorization: Bearer OWY2NGE0YTQtNGQ0MS00ZjVkLWI3ZTUtOGY2ZDZhNGE0YTQ0
@@ -68,22 +68,22 @@ Validade: 1 ano (31.536.000 segundos).
 
 ## Status Codes
 
-| Codigo | Descricao |
+| Código | Descrição |
 |--------|-----------|
 | 200 | Sucesso |
 | 201 | Criado com sucesso |
-| 400 | Requisicao invalida (parametros ausentes ou invalidos) |
-| 401 | Nao autorizado (token ausente, invalido ou expirado) |
-| 404 | Recurso nao encontrado |
-| 405 | Metodo nao permitido |
-| 409 | Conflito (ex: CPF ja cadastrado, horario ocupado) |
+| 400 | Requisição inválida (parâmetros ausentes ou inválidos) |
+| 401 | Não autorizado (token ausente, inválido ou expirado) |
+| 404 | Recurso não encontrado |
+| 405 | Método não permitido |
+| 409 | Conflito (ex: CPF já cadastrado, horário ocupado) |
 | 500 | Erro interno do servidor |
 
 ---
 
 ## Endpoints
 
-### Agendas e Horarios
+### Agendas e Horários
 
 #### Listar Agendas
 
@@ -93,12 +93,12 @@ Retorna agendas filtradas por tipo e especialidade/procedimento.
 GET /listar_agendas.php?tipo={tipo}&nome={nome}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | tipo | string | Sim | `consulta` ou `procedimento` |
 | nome | string | Sim | Nome da especialidade ou procedimento |
-| dia | string | Nao | Dia da semana (Segunda, Terca, etc.) |
-| cidade | integer | Nao | ID da cidade/unidade |
+| dia | string | Não | Dia da semana (Segunda, Terça, etc.) |
+| cidade | integer | Não | ID da cidade/unidade |
 
 **Resposta:**
 ```json
@@ -116,7 +116,7 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}
       "id": 84,
       "tipo": "consulta",
       "nome_display": "Dr(a). CAMILO DE PAIVA CANTIDIO",
-      "unidade": "Mossoro",
+      "unidade": "Mossoró",
       "sala": "2o andar",
       "telefone": "(84) 3315-6900",
       "tempo_estimado_minutos": 20,
@@ -127,7 +127,7 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}
           "dia_semana": "Segunda",
           "turnos": [
             {
-              "periodo": "manha",
+              "periodo": "manhã",
               "inicio": "08:00",
               "fim": "11:00"
             }
@@ -153,19 +153,19 @@ GET /listar_agendas.php?tipo={tipo}&nome={nome}
 
 #### Listar Agendas (JSON Estruturado com Auth)
 
-Versao com autenticacao obrigatoria e estrutura mais detalhada.
+Versão com autenticação obrigatória e estrutura mais detalhada.
 
 ```http
 GET /listar_agendas_json.php?tipo={tipo}&nome={nome}
 Authorization: Bearer {token}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | tipo | string | Sim | `consulta` ou `procedimento` |
 | nome | string | Sim | Nome da especialidade ou procedimento |
-| dia | string | Nao | Dia da semana |
-| cidade | integer | Nao | ID da cidade/unidade |
+| dia | string | Não | Dia da semana |
+| cidade | integer | Não | ID da cidade/unidade |
 
 **Resposta:**
 ```json
@@ -192,7 +192,7 @@ Authorization: Bearer {token}
       },
       "localizacao": {
         "unidade_id": 1,
-        "unidade_nome": "MOSSORO - RN",
+        "unidade_nome": "MOSSORÓ - RN",
         "sala": "201",
         "telefone": "(84) 3315-2773"
       },
@@ -210,7 +210,7 @@ Authorization: Bearer {token}
       "horarios_por_dia": {
         "Segunda": [
           {
-            "periodo": "manha",
+            "periodo": "manhã",
             "inicio": "07:00",
             "fim": "13:20"
           }
@@ -225,8 +225,8 @@ Authorization: Bearer {token}
         { "id": 962, "nome": "PARTICULAR" }
       ],
       "avisos": {
-        "observacoes": "NAO ESTA ATENDENDO AMIL",
-        "informacoes_fixas": "ATENDE SAUDE BRASIL CRM 5991",
+        "observacoes": "NÃO ESTÁ ATENDENDO AMIL",
+        "informacoes_fixas": "ATENDE SAÚDE BRASIL CRM 5991",
         "orientacoes": "Trazer exames anteriores"
       }
     }
@@ -236,13 +236,13 @@ Authorization: Bearer {token}
 
 ---
 
-#### Buscar Horarios Disponiveis
+#### Buscar Horários Disponíveis
 
 ```http
 GET /buscar_horarios.php?agenda_id={id}&data={data}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | agenda_id | integer | Sim | ID da agenda |
 | data | string | Sim | Data no formato YYYY-MM-DD |
@@ -299,27 +299,27 @@ POST /processar_agendamento.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
-**Parametros obrigatorios:**
+**Parâmetros obrigatórios:**
 
-| Parametro | Tipo | Descricao |
+| Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
 | agenda_id | integer | ID da agenda |
 | data_agendamento | string | Data YYYY-MM-DD |
-| hora_agendamento | string | Horario HH:MM (aceita tambem `horario_agendamento`) |
+| hora_agendamento | string | Horário HH:MM (aceita também `horario_agendamento`) |
 | nome_paciente | string | Nome completo |
 | telefone_paciente | string | Telefone de contato |
-| convenio_id | integer | ID do convenio |
+| convenio_id | integer | ID do convênio |
 
-**Parametros opcionais:**
+**Parâmetros opcionais:**
 
-| Parametro | Tipo | Descricao |
+| Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| paciente_id | integer | ID do paciente (se ja cadastrado) |
+| paciente_id | integer | ID do paciente (se já cadastrado) |
 | usar_paciente_existente | string | `"true"` ou `"false"` |
 | tipo_consulta | string | `primeira_vez` ou `retorno` |
-| observacoes | string | Observacoes adicionais |
+| observacoes | string | Observações adicionais |
 | especialidade_id | integer | ID da especialidade |
-| exames_ids | string | IDs separados por virgula (ex: `"31,32,33"`) |
+| exames_ids | string | IDs separados por vírgula (ex: `"31,32,33"`) |
 | cpf_paciente | string | CPF do paciente |
 | data_nascimento | string | Data YYYY-MM-DD |
 | sexo | string | `M` ou `F` |
@@ -337,7 +337,7 @@ Content-Type: application/x-www-form-urlencoded
     "tipo_agenda": "consulta",
     "medico": "CAMILO DE PAIVA CANTIDIO",
     "especialidade": "Cardiologista",
-    "unidade": "Mossoro"
+    "unidade": "Mossoró"
   },
   "paciente_id": 636200,
   "paciente_nome": "JOAO SILVA",
@@ -379,7 +379,7 @@ GET /buscar_agendamento.php?id={agendamento_id}
     "id": 1,
     "sala": "101",
     "telefone": "(84) 3421-1234",
-    "unidade": "Mossoro",
+    "unidade": "Mossoró",
     "medico": "Dr. Joao Silva",
     "especialidade": "Cardiologia"
   },
@@ -424,11 +424,11 @@ POST /cancelar_agendamento.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | agendamento_id | integer | Sim | ID do agendamento |
 | motivo | string | Sim | Motivo do cancelamento |
-| usuario | string | Nao | Usuario responsavel |
+| usuario | string | Não | Usuário responsável |
 
 **Resposta:**
 ```json
@@ -448,11 +448,11 @@ POST /atualizar_status_agendamento.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
-| Parametro | Tipo | Descricao |
+| Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
 | agendamento_id | integer | ID do agendamento |
 | status | string | AGENDADO, CONFIRMADO, CHEGOU, ATENDIDO, CANCELADO, FALTOU |
-| usuario | string | Usuario responsavel |
+| usuario | string | Usuário responsável |
 
 ---
 
@@ -463,14 +463,14 @@ GET /consultar_agendamentos_paciente.php?paciente_id={id}
 Authorization: Bearer {token}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | paciente_id | integer | Sim* | ID do paciente |
 | cpf | string | Sim* | CPF (alternativa ao paciente_id) |
-| status | string | Nao | Filtrar por status |
-| data_inicio | string | Nao | Data inicial YYYY-MM-DD |
-| data_fim | string | Nao | Data final YYYY-MM-DD |
-| limite | integer | Nao | Limite de registros (default: 50) |
+| status | string | Não | Filtrar por status |
+| data_inicio | string | Não | Data inicial YYYY-MM-DD |
+| data_fim | string | Não | Data final YYYY-MM-DD |
+| limite | integer | Não | Limite de registros (default: 50) |
 
 *Informar `paciente_id` ou `cpf`.
 
@@ -492,7 +492,7 @@ Authorization: Bearer {token}
         "tipo": "procedimento"
       },
       "unidade": {
-        "nome": "Mossoro"
+        "nome": "Mossoró"
       },
       "medico": {
         "nome": "Dr. Silva"
@@ -523,7 +523,7 @@ Content-Type: application/json
 ```json
 {
   "agendamento_id": 123,
-  "observacao": "Paciente nao compareceu",
+  "observacao": "Paciente não compareceu",
   "enviar_notificacao": true,
   "usuario": "RECEPCAO"
 }
@@ -535,21 +535,21 @@ Content-Type: application/json
 
 #### Buscar Paciente
 
-Busca por nome (parcial, multiplas palavras), CPF (com ou sem formatacao) ou data de nascimento.
+Busca por nome (parcial, múltiplas palavras), CPF (com ou sem formatação) ou data de nascimento.
 
 ```http
 POST /buscar_paciente.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
-| Parametro | Tipo | Descricao |
+| Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| termo | string | Nome, CPF (com ou sem formatacao) ou data de nascimento |
+| termo | string | Nome, CPF (com ou sem formatação) ou data de nascimento |
 
 **Exemplos de busca:**
 - Nome: `termo=JOAO SILVA` (busca todas as palavras em qualquer ordem)
 - CPF formatado: `termo=086.357.094-11`
-- CPF sem formatacao: `termo=08635709411`
+- CPF sem formatação: `termo=08635709411`
 - Data nascimento: `termo=15/03/1990`
 
 **Resposta:**
@@ -581,7 +581,7 @@ Content-Type: application/json
 Authorization: Bearer {token}
 ```
 
-**Body (campos obrigatorios):**
+**Body (campos obrigatórios):**
 ```json
 {
   "nome": "Joao Silva Santos",
@@ -600,7 +600,7 @@ Authorization: Bearer {token}
   "email": "joao@email.com",
   "endereco": "Rua Principal, 123",
   "cep": "59600-000",
-  "cidade": "Mossoro",
+  "cidade": "Mossoró",
   "estado": "RN",
   "nome_mae": "Maria Silva",
   "rg": "1234567",
@@ -629,16 +629,16 @@ Authorization: Bearer {token}
 ```json
 {
   "error": "Conflict",
-  "message": "CPF ja cadastrado",
+  "message": "CPF já cadastrado",
   "paciente_existente_id": 622684
 }
 ```
 
 ---
 
-### Medicos e Especialidades
+### Médicos e Especialidades
 
-#### Listar Medicos
+#### Listar Médicos
 
 ```http
 GET /buscar_medicos.php?busca={termo}
@@ -676,9 +676,9 @@ GET /buscar_especialidades.php?busca={termo}
 
 ---
 
-### Convenios, Formas de Pagamento e Precos
+### Convênios, Formas de Pagamento e Preços
 
-#### Listar Convenios
+#### Listar Convênios
 
 ```http
 GET /buscar_convenios.php?busca={termo}
@@ -698,18 +698,18 @@ GET /buscar_convenios.php?busca={termo}
 
 ---
 
-#### Buscar Convenios e Formas de Pagamento da Agenda
+#### Buscar Convênios e Formas de Pagamento da Agenda
 
-Retorna as categorias de convenio (Particular, Cartao de Desconto, etc.) e as formas de pagamento disponiveis (Dinheiro, PIX, Cartao Credito, Debito, Parcelado) com o `lab_convenio_id` correto para consulta de precos.
+Retorna as categorias de convênio (Particular, Cartão de Desconto, etc.) e as formas de pagamento disponíveis (Dinheiro, PIX, Cartão Crédito, Débito, Parcelado) com o `lab_convenio_id` correto para consulta de preços.
 
-A cidade e detectada **automaticamente** a partir da agenda (`AGENDAS.UNIDADE_ID` -> `LAB_CIDADES`).
+A cidade é detectada **automaticamente** a partir da agenda (`AGENDAS.UNIDADE_ID` -> `LAB_CIDADES`).
 
 ```http
 GET /buscar_convenios_agenda.php?agenda_id={id}
 Authorization: Bearer {token}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | agenda_id | integer | Sim | ID da agenda |
 
@@ -718,7 +718,7 @@ Authorization: Bearer {token}
 {
   "status": "sucesso",
   "agenda_id": 84,
-  "cidade": "Mossoro",
+  "cidade": "Mossoró",
   "idlocal": 1,
   "medico": "CAMILO DE PAIVA CANTIDIO",
   "tipo": "consulta",
@@ -783,7 +783,7 @@ Authorization: Bearer {token}
     },
     {
       "categoria_id": 16,
-      "categoria": "Cartao de Desconto",
+      "categoria": "Cartão de Desconto",
       "tem_opcoes": true,
       "opcoes": [
         {
@@ -810,7 +810,7 @@ Authorization: Bearer {token}
     },
     {
       "categoria_id": 27,
-      "categoria": "Exercito",
+      "categoria": "Exército",
       "tem_opcoes": false,
       "opcoes": []
     }
@@ -820,48 +820,48 @@ Authorization: Bearer {token}
 
 **Valores do campo `forma_pagamento`:**
 
-| Valor | Descricao |
+| Valor | Descrição |
 |-------|-----------|
 | DINHEIRO | Pagamento em dinheiro |
 | PIX | Pagamento via PIX |
-| CARTAO | Cartao de credito, debito ou parcelado |
-| CARTAO_DESCONTO | Cartao de desconto (com ou sem cartao) |
-| SOCIO | Socio/conveniado |
+| CARTAO | Cartão de crédito, débito ou parcelado |
+| CARTAO_DESCONTO | Cartão de desconto (com ou sem cartão) |
+| SOCIO | Sócio/conveniado |
 
-**Exemplo de precos para RM CRANIO SEM CONTRASTE (Mossoro):**
+**Exemplo de preços para RM CRÂNIO SEM CONTRASTE (Mossoró):**
 
 | Categoria | Forma | lab_convenio_id | Valor |
 |-----------|-------|-----------------|-------|
 | Particular | Dinheiro | 24 | R$ 650,00 |
 | Particular | PIX | 1665 | R$ 650,00 |
-| Particular | Cartao Credito | 1613 | R$ 760,50 |
-| Particular | Cartao Debito | 1614 | R$ 760,50 |
-| Particular | Cartao Parcelado | 1615 | R$ 760,50 |
-| Cartao Desconto | Dinheiro | 2118 | R$ 500,00 |
-| Cartao Desconto | PIX | 2406 | R$ 500,00 |
-| Cartao Desconto | Credito | 2403 | R$ 585,00 |
-| Cartao Desconto | Debito | 2404 | R$ 585,00 |
-| Cartao Desconto | Parcelado | 2405 | R$ 585,00 |
+| Particular | Cartão Crédito | 1613 | R$ 760,50 |
+| Particular | Cartão Débito | 1614 | R$ 760,50 |
+| Particular | Cartão Parcelado | 1615 | R$ 760,50 |
+| Cartão Desconto | Dinheiro | 2118 | R$ 500,00 |
+| Cartão Desconto | PIX | 2406 | R$ 500,00 |
+| Cartão Desconto | Crédito | 2403 | R$ 585,00 |
+| Cartão Desconto | Débito | 2404 | R$ 585,00 |
+| Cartão Desconto | Parcelado | 2405 | R$ 585,00 |
 
 ---
 
-#### Consultar Precos
+#### Consultar Preços
 
-Usa o `lab_convenio_id` retornado pelo `buscar_convenios_agenda.php` para consultar o preco correto do exame.
+Usa o `lab_convenio_id` retornado pelo `buscar_convenios_agenda.php` para consultar o preço correto do exame.
 
 ```http
 GET /consultar_precos.php?convenio_id={lab_convenio_id}
 Authorization: Bearer {token}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
 | convenio_id | integer | Sim | ID do LAB_CONVENIO (retornado por buscar_convenios_agenda) |
-| busca | string | Nao | Busca por nome do exame |
-| exame_id | integer | Nao | ID do exame |
-| procedimento_id | integer | Nao | ID do procedimento |
+| busca | string | Não | Busca por nome do exame |
+| exame_id | integer | Não | ID do exame |
+| procedimento_id | integer | Não | ID do procedimento |
 
-**Exemplo - PIX Mossoro:**
+**Exemplo - PIX Mossoró:**
 ```bash
 GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO SEM
 ```
@@ -901,9 +901,9 @@ GET /buscar_exames_agenda.php?agenda_id={id}
   "procedimento_id": 34,
   "total_exames": 3,
   "exames": [
-    { "id": 31, "nome": "Ressonancia Magnetica - Cranio" },
-    { "id": 32, "nome": "Ressonancia Magnetica - Coluna" },
-    { "id": 33, "nome": "Ressonancia Magnetica - Joelho" }
+    { "id": 31, "nome": "Ressonância Magnética - Crânio" },
+    { "id": 32, "nome": "Ressonância Magnética - Coluna" },
+    { "id": 33, "nome": "Ressonância Magnética - Joelho" }
   ]
 }
 ```
@@ -920,7 +920,7 @@ GET /buscar_procedimentos.php?busca={termo}
 ```json
 {
   "results": [
-    { "id": "34", "text": "Ressonancia Magnetica" },
+    { "id": "34", "text": "Ressonância Magnética" },
     { "id": "35", "text": "Tomografia Computadorizada" },
     { "id": "36", "text": "Ultrassonografia" }
   ],
@@ -937,11 +937,11 @@ GET /consultar_preparos.php?exame_id={id}
 Authorization: Bearer {token}
 ```
 
-| Parametro | Tipo | Obrigatorio | Descricao |
+| Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|-------------|-----------|
-| exame_id | integer | Nao | ID do exame |
-| procedimento_id | integer | Nao | ID do procedimento |
-| busca | string | Nao | Busca livre |
+| exame_id | integer | Não | ID do exame |
+| procedimento_id | integer | Não | ID do procedimento |
+| busca | string | Não | Busca livre |
 
 **Resposta:**
 ```json
@@ -950,11 +950,11 @@ Authorization: Bearer {token}
   "total_preparos": 1,
   "preparos": [
     {
-      "exame_nome": "Ressonancia Magnetica - Cranio",
+      "exame_nome": "Ressonância Magnética - Crânio",
       "titulo": "Preparo para RM",
       "instrucoes": [
         "Jejum de 4 horas antes do exame",
-        "Retirar todos os objetos metalicos"
+        "Retirar todos os objetos metálicos"
       ],
       "tempo_jejum_horas": 4,
       "anexos": [
@@ -994,7 +994,7 @@ Authorization: Bearer {token}
       "servicos": {
         "especialidades": [
           { "id": 6, "nome": "Cardiologista" },
-          { "id": 5, "nome": "Clinico Geral" }
+          { "id": 5, "nome": "Clínico Geral" }
         ],
         "procedimentos": [],
         "total_especialidades": 9,
@@ -1021,7 +1021,7 @@ Authorization: Bearer {token}
 GET /consultar_auditoria.php?data_inicio={data}&data_fim={data}
 ```
 
-#### Historico de um Agendamento
+#### Histórico de um Agendamento
 
 ```http
 GET /buscar_historico_agendamento.php?agendamento_id={id}
@@ -1033,39 +1033,39 @@ GET /buscar_historico_agendamento.php?agendamento_id={id}
 
 ### Status do Agendamento
 
-| Status | Descricao |
+| Status | Descrição |
 |--------|-----------|
-| AGENDADO | Agendamento criado, aguardando confirmacao |
-| CONFIRMADO | Paciente confirmou presenca |
-| CHEGOU | Paciente chegou na clinica |
+| AGENDADO | Agendamento criado, aguardando confirmação |
+| CONFIRMADO | Paciente confirmou presença |
+| CHEGOU | Paciente chegou na clínica |
 | ATENDIDO | Atendimento realizado |
 | CANCELADO | Agendamento cancelado |
-| FALTOU | Paciente nao compareceu (no-show) |
+| FALTOU | Paciente não compareceu (no-show) |
 
 ### Tipos de Agendamento
 
-| Tipo | Descricao |
+| Tipo | Descrição |
 |------|-----------|
 | NORMAL | Agendamento regular (conta para limite de vagas) |
-| ENCAIXE | Encaixe extra (limite proprio separado) |
+| ENCAIXE | Encaixe extra (limite próprio separado) |
 
 ### Tipos de Consulta
 
-| Tipo | Descricao |
+| Tipo | Descrição |
 |------|-----------|
-| primeira_vez | Primeira consulta com o medico |
+| primeira_vez | Primeira consulta com o médico |
 | retorno | Retorno de consulta anterior |
 
 ### Controle de Vagas
 
-O sistema controla vagas por **dia da semana**, nao por data:
+O sistema controla vagas por **dia da semana**, não por data:
 - Cada agenda define vagas para cada dia (VAGAS_SEG, VAGAS_TER, etc.)
-- O sistema verifica quantos agendamentos NORMAIS ja existem na data
-- Encaixes tem limite proprio separado
+- O sistema verifica quantos agendamentos NORMAIS já existem na data
+- Encaixes têm limite próprio separado
 
 ---
 
-## Fluxos de Integracao
+## Fluxos de Integração
 
 ### Fluxo 1: Agendamento de Consulta
 
@@ -1088,19 +1088,19 @@ O sistema controla vagas por **dia da semana**, nao por data:
 6. POST /processar_agendamento.php  (com exames_ids=31,32)
 ```
 
-### Fluxo 3: Consulta de Precos (Particular/Cartao de Desconto)
+### Fluxo 3: Consulta de Preços (Particular/Cartão de Desconto)
 
-O preco varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` para obter o `lab_convenio_id` correto.
+O preço varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` para obter o `lab_convenio_id` correto.
 
 ```
 1. GET /buscar_convenios_agenda.php?agenda_id=84
-   -> Retorna categorias: Particular (tem_opcoes: true), Cartao de Desconto (tem_opcoes: true)
-   -> Particular tem: Dinheiro (id=24), PIX (id=1665), Credito (id=1613), Debito (id=1614), Parcelado (id=1615)
+   -> Retorna categorias: Particular (tem_opcoes: true), Cartão de Desconto (tem_opcoes: true)
+   -> Particular tem: Dinheiro (id=24), PIX (id=1665), Crédito (id=1613), Débito (id=1614), Parcelado (id=1615)
 
-2. Bot pergunta: "Particular ou Cartao de Desconto?"
+2. Bot pergunta: "Particular ou Cartão de Desconto?"
    -> Paciente: "Particular"
 
-3. Bot pergunta: "Dinheiro, PIX, Credito, Debito ou Parcelado?"
+3. Bot pergunta: "Dinheiro, PIX, Crédito, Débito ou Parcelado?"
    -> Paciente: "PIX" -> lab_convenio_id = 1665
 
 4. GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO
@@ -1118,7 +1118,7 @@ O preco varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` 
 
 ```
 1. POST /buscar_paciente.php  (termo=08635709411)
-   -> Busca CPF com ou sem formatacao
+   -> Busca CPF com ou sem formatação
    -> Retorna paciente com id, nome, cpf, telefone, data_nascimento
 2. Usar paciente_id no agendamento com usar_paciente_existente=true
 ```
@@ -1127,43 +1127,43 @@ O preco varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` 
 
 ## Erros Comuns
 
-### Autenticacao
+### Autenticação
 
 | Mensagem | Causa |
 |----------|-------|
-| Authorization header missing | Header Authorization nao enviado |
+| Authorization header missing | Header Authorization não enviado |
 | Invalid authorization format | Formato incorreto (deve ser `Bearer {token}`) |
-| Invalid token | Token nao existe ou foi revogado |
+| Invalid token | Token não existe ou foi revogado |
 | Token expired | Token expirado |
 
 ### Agendamentos
 
 | Mensagem | Causa |
 |----------|-------|
-| Horario nao disponivel | Horario ja ocupado |
+| Horário não disponível | Horário já ocupado |
 | Agenda bloqueada | Agenda com bloqueio ativo |
 | Limite de vagas atingido | Sem vagas para o dia |
-| Paciente nao encontrado | ID do paciente invalido |
-| Agendamento nao encontrado | ID do agendamento invalido |
+| Paciente não encontrado | ID do paciente inválido |
+| Agendamento não encontrado | ID do agendamento inválido |
 
 ### Geral
 
 | Mensagem | Causa |
 |----------|-------|
-| Parametros invalidos | Campos obrigatorios ausentes |
+| Parâmetros inválidos | Campos obrigatórios ausentes |
 | Erro interno do servidor | Falha no processamento |
 
 ---
 
-## Observacoes Tecnicas
+## Observações Técnicas
 
-- Todos os horarios estao no fuso de Brasilia (BRT/BRST)
+- Todos os horários estão no fuso de Brasília (BRT/BRST)
 - Datas no formato ISO 8601 (YYYY-MM-DD)
 - O banco Firebird usa Windows-1252 internamente; a API converte para UTF-8
-- Caracteres especiais (acentos, o, a) sao corrigidos automaticamente
-- Todas as operacoes sao registradas na auditoria
+- Caracteres especiais (acentos, ç, ã) são corrigidos automaticamente
+- Todas as operações são registradas na auditoria
 
 ---
 
-**Versao:** 3.1
-**Ultima atualizacao:** 19 Fevereiro 2026
+**Versão:** 3.1
+**Última atualização:** 19 Fevereiro 2026

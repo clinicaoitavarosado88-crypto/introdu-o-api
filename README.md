@@ -1,10 +1,10 @@
-# API Sistema de Agendamento - Clinica Oitava Rosado
+# API Sistema de Agendamento - Clínica Oitava Rosado
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-blue.svg)](https://php.net)
 [![Firebird](https://img.shields.io/badge/Database-Firebird-orange.svg)](https://firebirdsql.org)
 [![API Version](https://img.shields.io/badge/API-v3.1-green.svg)](API_DOCUMENTATION.md)
 
-API REST para gerenciamento de agendamentos medicos, desenvolvida para integracao com Agentes de IA, chatbots e aplicacoes externas.
+API REST para gerenciamento de agendamentos médicos, desenvolvida para integração com Agentes de IA, chatbots e aplicações externas.
 
 ---
 
@@ -14,9 +14,9 @@ API REST para gerenciamento de agendamentos medicos, desenvolvida para integraca
 http://sistema.clinicaoitavarosado.com.br/oitava/agenda/
 ```
 
-## Autenticacao
+## Autenticação
 
-Todas as requisicoes exigem **Bearer Token** no header `Authorization`.
+Todas as requisições exigem **Bearer Token** no header `Authorization`.
 
 ```bash
 # 1. Obter token
@@ -27,7 +27,7 @@ curl -X POST "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/auth/token
 # Resposta:
 # { "access_token": "SEU_TOKEN", "token_type": "Bearer", "expires_in": 31536000 }
 
-# 2. Usar token em todas as requisicoes
+# 2. Usar token em todas as requisições
 curl -H "Authorization: Bearer SEU_TOKEN" \
   "http://sistema.clinicaoitavarosado.com.br/oitava/agenda/buscar_medicos.php"
 ```
@@ -36,23 +36,23 @@ Validade do token: **1 ano**.
 
 ---
 
-## Endpoints Disponiveis
+## Endpoints Disponíveis
 
-### Agendas e Horarios
+### Agendas e Horários
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
 | `listar_agendas.php` | GET | Listar agendas por tipo e especialidade |
 | `listar_agendas_json.php` | GET | Listar agendas (JSON estruturado com auth) |
-| `buscar_horarios.php` | GET | Horarios disponiveis por agenda e data |
-| `verificar_vagas.php` | GET | Verificar vagas por convenio |
-| `buscar_info_agenda.php` | GET | Informacoes completas da agenda |
-| `buscar_bloqueios.php` | GET | Bloqueios de horario |
+| `buscar_horarios.php` | GET | Horários disponíveis por agenda e data |
+| `verificar_vagas.php` | GET | Verificar vagas por convênio |
+| `buscar_info_agenda.php` | GET | Informações completas da agenda |
+| `buscar_bloqueios.php` | GET | Bloqueios de horário |
 | `dias_disponiveis.php` | GET | Dias com disponibilidade |
 
 ### Agendamentos
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
 | `processar_agendamento.php` | POST | Criar agendamento |
 | `buscar_agendamento.php` | GET | Detalhes de um agendamento |
@@ -63,42 +63,42 @@ Validade do token: **1 ano**.
 | `atualizar_status_agendamento.php` | POST | Atualizar status |
 | `marcar_chegada.php` | POST | Registrar chegada |
 | `processar_noshow.php` | POST | Registrar falta |
-| `consultar_agendamentos_paciente.php` | GET | Historico do paciente |
+| `consultar_agendamentos_paciente.php` | GET | Histórico do paciente |
 
 ### Pacientes
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
 | `buscar_paciente.php` | POST | Buscar por nome, CPF ou telefone |
 | `cadastrar_paciente.php` | POST | Cadastrar novo paciente |
 | `validar_paciente.php` | GET | Validar dados do paciente |
 
-### Medicos, Especialidades e Convenios
+### Médicos, Especialidades e Convênios
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
-| `buscar_medicos.php` | GET | Listar medicos |
+| `buscar_medicos.php` | GET | Listar médicos |
 | `buscar_especialidades.php` | GET | Listar especialidades |
-| `buscar_convenios.php` | GET | Listar convenios |
-| `buscar_convenios_agenda.php` | GET | **Convenios e formas de pagamento por agenda** |
+| `buscar_convenios.php` | GET | Listar convênios |
+| `buscar_convenios_agenda.php` | GET | **Convênios e formas de pagamento por agenda** |
 | `consultar_unidades.php` | GET | Unidades com especialidades |
-| `consultar_precos.php` | GET | Precos por convenio |
+| `consultar_precos.php` | GET | Preços por convênio |
 
 ### Exames e Procedimentos
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
 | `buscar_exames_agenda.php` | GET | Exames de uma agenda |
 | `buscar_procedimentos.php` | GET | Listar procedimentos |
-| `consultar_preparos.php` | GET | Instrucoes de preparo |
-| `buscar_exames_convenio.php` | GET | Exames por convenio |
+| `consultar_preparos.php` | GET | Instruções de preparo |
+| `buscar_exames_convenio.php` | GET | Exames por convênio |
 
 ### Auditoria
 
-| Endpoint | Metodo | Descricao |
+| Endpoint | Método | Descrição |
 |----------|--------|-----------|
-| `consultar_auditoria.php` | GET | Historico de acoes |
-| `buscar_historico_agendamento.php` | GET | Historico de um agendamento |
+| `consultar_auditoria.php` | GET | Histórico de ações |
+| `buscar_historico_agendamento.php` | GET | Histórico de um agendamento |
 
 ---
 
@@ -112,7 +112,7 @@ BASE="http://sistema.clinicaoitavarosado.com.br/oitava/agenda"
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/listar_agendas_json.php?tipo=consulta&nome=Cardiologista"
 
-# 2. Ver horarios disponiveis
+# 2. Ver horários disponíveis
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_horarios.php?agenda_id=84&data=2026-03-10"
 
@@ -120,11 +120,11 @@ curl -H "Authorization: Bearer $TOKEN" \
 curl -X POST -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_paciente.php" -d "termo=08635709411"
 
-# 4. Consultar convenios e formas de pagamento da agenda
+# 4. Consultar convênios e formas de pagamento da agenda
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_convenios_agenda.php?agenda_id=84"
 
-# 5. Consultar preco do exame pela forma de pagamento
+# 5. Consultar preço do exame pela forma de pagamento
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
 
@@ -141,27 +141,27 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
   -d "usar_paciente_existente=true"
 ```
 
-### Fluxo de Precos (Particular e Cartao de Desconto)
+### Fluxo de Preços (Particular e Cartão de Desconto)
 
 ```bash
-# 1. Buscar convenios da agenda (detecta cidade automaticamente)
+# 1. Buscar convênios da agenda (detecta cidade automaticamente)
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_convenios_agenda.php?agenda_id=84"
-# Retorna categorias: Particular, Cartao de Desconto, etc.
-# Cada categoria com formas de pagamento: Dinheiro, PIX, Cartao Credito, Debito, Parcelado
-# Cada forma com seu lab_convenio_id para consulta de preco
+# Retorna categorias: Particular, Cartão de Desconto, etc.
+# Cada categoria com formas de pagamento: Dinheiro, PIX, Cartão Crédito, Débito, Parcelado
+# Cada forma com seu lab_convenio_id para consulta de preço
 
 # 2. Paciente escolhe "Particular" + "PIX" -> lab_convenio_id=1665
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
 # Retorna: R$ 650,00
 
-# 3. Paciente escolhe "Particular" + "Cartao Credito" -> lab_convenio_id=1613
+# 3. Paciente escolhe "Particular" + "Cartão Crédito" -> lab_convenio_id=1613
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=1613&busca=RM CRANIO"
 # Retorna: R$ 760,50
 
-# 4. Paciente escolhe "Cartao de Desconto" + "Dinheiro" -> lab_convenio_id=2118
+# 4. Paciente escolhe "Cartão de Desconto" + "Dinheiro" -> lab_convenio_id=2118
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/consultar_precos.php?convenio_id=2118&busca=RM CRANIO"
 # Retorna: R$ 500,00
@@ -184,41 +184,41 @@ Erros retornam:
 ```json
 {
   "erro": true,
-  "mensagem": "Descricao do erro"
+  "mensagem": "Descrição do erro"
 }
 ```
 
 ### Status Codes
 
-| Codigo | Descricao |
+| Código | Descrição |
 |--------|-----------|
 | 200 | Sucesso |
-| 400 | Requisicao invalida |
-| 401 | Nao autorizado |
-| 404 | Recurso nao encontrado |
+| 400 | Requisição inválida |
+| 401 | Não autorizado |
+| 404 | Recurso não encontrado |
 | 409 | Conflito (ex: CPF duplicado) |
 | 500 | Erro interno |
 
 ---
 
-## Requisitos Tecnicos
+## Requisitos Técnicos
 
 - **PHP:** 7.4+
 - **Banco de Dados:** Firebird 2.5+
-- **Extensoes PHP:** php-interbase, php-mbstring, php-curl
+- **Extensões PHP:** php-interbase, php-mbstring, php-curl
 - **Encoding:** UTF-8 (API) / Windows-1252 (Banco)
 
 ---
 
-## Documentacao Completa
+## Documentação Completa
 
-Consulte **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** para detalhes de cada endpoint, parametros, exemplos de request/response e fluxos completos.
+Consulte **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** para detalhes de cada endpoint, parâmetros, exemplos de request/response e fluxos completos.
 
 ---
 
 ## Suporte
 
 - **Telefone:** (84) 3315-6900
-- **Endereco:** Mossoro - RN
+- **Endereço:** Mossoró - RN
 
-(c) 2026 Clinica Oitava Rosado. Todos os direitos reservados.
+(c) 2026 Clínica Oitava Rosado. Todos os direitos reservados.
