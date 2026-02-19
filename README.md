@@ -2,7 +2,7 @@
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-blue.svg)](https://php.net)
 [![Firebird](https://img.shields.io/badge/Database-Firebird-orange.svg)](https://firebirdsql.org)
-[![API Version](https://img.shields.io/badge/API-v3.0-green.svg)](API_DOCUMENTATION.md)
+[![API Version](https://img.shields.io/badge/API-v3.1-green.svg)](API_DOCUMENTATION.md)
 
 API REST para gerenciamento de agendamentos medicos, desenvolvida para integracao com Agentes de IA, chatbots e aplicacoes externas.
 
@@ -80,6 +80,7 @@ Validade do token: **1 ano**.
 | `buscar_medicos.php` | GET | Listar medicos |
 | `buscar_especialidades.php` | GET | Listar especialidades |
 | `buscar_convenios.php` | GET | Listar convenios |
+| `buscar_convenios_agenda.php` | GET | **Convenios e formas de pagamento por agenda** |
 | `consultar_unidades.php` | GET | Unidades com especialidades |
 | `consultar_precos.php` | GET | Precos por convenio |
 
@@ -115,11 +116,19 @@ curl -H "Authorization: Bearer $TOKEN" \
 curl -H "Authorization: Bearer $TOKEN" \
   "$BASE/buscar_horarios.php?agenda_id=84&data=2026-03-10"
 
-# 3. Buscar paciente
+# 3. Buscar paciente por nome ou CPF
 curl -X POST -H "Authorization: Bearer $TOKEN" \
-  "$BASE/buscar_paciente.php" -d "termo=Joao Silva"
+  "$BASE/buscar_paciente.php" -d "termo=08635709411"
 
-# 4. Criar agendamento
+# 4. Consultar convenios e formas de pagamento da agenda
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/buscar_convenios_agenda.php?agenda_id=84"
+
+# 5. Consultar preco do exame pela forma de pagamento
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
+
+# 6. Criar agendamento
 curl -X POST -H "Authorization: Bearer $TOKEN" \
   "$BASE/processar_agendamento.php" \
   -d "agenda_id=84" \
@@ -130,6 +139,32 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
   -d "nome_paciente=Joao Silva" \
   -d "telefone_paciente=(84) 99999-9999" \
   -d "usar_paciente_existente=true"
+```
+
+### Fluxo de Precos (Particular e Cartao de Desconto)
+
+```bash
+# 1. Buscar convenios da agenda (detecta cidade automaticamente)
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/buscar_convenios_agenda.php?agenda_id=84"
+# Retorna categorias: Particular, Cartao de Desconto, etc.
+# Cada categoria com formas de pagamento: Dinheiro, PIX, Cartao Credito, Debito, Parcelado
+# Cada forma com seu lab_convenio_id para consulta de preco
+
+# 2. Paciente escolhe "Particular" + "PIX" -> lab_convenio_id=1665
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/consultar_precos.php?convenio_id=1665&busca=RM CRANIO"
+# Retorna: R$ 650,00
+
+# 3. Paciente escolhe "Particular" + "Cartao Credito" -> lab_convenio_id=1613
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/consultar_precos.php?convenio_id=1613&busca=RM CRANIO"
+# Retorna: R$ 760,50
+
+# 4. Paciente escolhe "Cartao de Desconto" + "Dinheiro" -> lab_convenio_id=2118
+curl -H "Authorization: Bearer $TOKEN" \
+  "$BASE/consultar_precos.php?convenio_id=2118&busca=RM CRANIO"
+# Retorna: R$ 500,00
 ```
 
 ---

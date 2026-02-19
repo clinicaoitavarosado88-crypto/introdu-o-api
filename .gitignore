@@ -46,6 +46,10 @@ node_modules/
 # Composer
 vendor/
 
+# Codigo fonte PHP (nao versionar, apenas documentacao)
+*.php
+!includes/connection.php
+
 # Configurações específicas
 whatsapp_config.php
 configuracoes.php

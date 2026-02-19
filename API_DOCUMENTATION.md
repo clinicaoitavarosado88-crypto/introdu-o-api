@@ -1,6 +1,6 @@
 # API Documentation - Clinica Oitava Rosado
 
-**Versao:** 3.0
+**Versao:** 3.1
 **URL Base:** `http://sistema.clinicaoitavarosado.com.br/oitava/agenda/`
 **Formato:** JSON (UTF-8)
 **Autenticacao:** Bearer Token
@@ -16,7 +16,7 @@
   - [Agendamentos](#agendamentos)
   - [Pacientes](#pacientes)
   - [Medicos e Especialidades](#medicos-e-especialidades)
-  - [Convenios e Precos](#convenios-e-precos)
+  - [Convenios, Formas de Pagamento e Precos](#convenios-formas-de-pagamento-e-precos)
   - [Exames e Procedimentos](#exames-e-procedimentos)
   - [Unidades](#unidades)
   - [Auditoria](#auditoria)
@@ -535,6 +535,8 @@ Content-Type: application/json
 
 #### Buscar Paciente
 
+Busca por nome (parcial, multiplas palavras), CPF (com ou sem formatacao) ou data de nascimento.
+
 ```http
 POST /buscar_paciente.php
 Content-Type: application/x-www-form-urlencoded
@@ -542,17 +544,26 @@ Content-Type: application/x-www-form-urlencoded
 
 | Parametro | Tipo | Descricao |
 |-----------|------|-----------|
-| termo | string | Nome, CPF, data de nascimento ou telefone |
+| termo | string | Nome, CPF (com ou sem formatacao) ou data de nascimento |
+
+**Exemplos de busca:**
+- Nome: `termo=JOAO SILVA` (busca todas as palavras em qualquer ordem)
+- CPF formatado: `termo=086.357.094-11`
+- CPF sem formatacao: `termo=08635709411`
+- Data nascimento: `termo=15/03/1990`
 
 **Resposta:**
 ```json
 {
+  "status": "sucesso",
+  "termo_busca": "08635709411",
+  "total_encontrados": 1,
   "pacientes": [
     {
-      "id": 1,
+      "id": 636200,
       "nome": "Joao Silva Santos",
-      "cpf": "123.456.789-01",
-      "data_nascimento": "1990-01-01",
+      "cpf": "086.357.094-11",
+      "data_nascimento": "1990-03-15",
       "telefone": "(84) 99999-9999",
       "email": "joao@email.com"
     }
@@ -665,7 +676,7 @@ GET /buscar_especialidades.php?busca={termo}
 
 ---
 
-### Convenios e Precos
+### Convenios, Formas de Pagamento e Precos
 
 #### Listar Convenios
 
@@ -687,32 +698,186 @@ GET /buscar_convenios.php?busca={termo}
 
 ---
 
-#### Consultar Precos
+#### Buscar Convenios e Formas de Pagamento da Agenda
+
+Retorna as categorias de convenio (Particular, Cartao de Desconto, etc.) e as formas de pagamento disponiveis (Dinheiro, PIX, Cartao Credito, Debito, Parcelado) com o `lab_convenio_id` correto para consulta de precos.
+
+A cidade e detectada **automaticamente** a partir da agenda (`AGENDAS.UNIDADE_ID` -> `LAB_CIDADES`).
 
 ```http
-GET /consultar_precos.php?convenio_id={id}
+GET /buscar_convenios_agenda.php?agenda_id={id}
 Authorization: Bearer {token}
 ```
 
 | Parametro | Tipo | Obrigatorio | Descricao |
 |-----------|------|-------------|-----------|
-| convenio_id | integer | Sim | ID do convenio |
-| especialidade_id | integer | Nao | ID da especialidade |
-| procedimento_id | integer | Nao | ID do procedimento |
-| unidade_id | integer | Nao | ID da unidade |
+| agenda_id | integer | Sim | ID da agenda |
 
 **Resposta:**
 ```json
 {
   "status": "sucesso",
-  "total_precos": 1,
-  "precos": [
+  "agenda_id": 84,
+  "cidade": "Mossoro",
+  "idlocal": 1,
+  "medico": "CAMILO DE PAIVA CANTIDIO",
+  "tipo": "consulta",
+  "total_categorias": 3,
+  "categorias": [
     {
-      "tipo_servico": "consulta",
-      "especialidade_nome": "Cardiologia",
-      "convenio_nome": "Amil",
-      "valor_consulta": 150.00,
-      "valor_retorno": 80.00
+      "categoria_id": 24,
+      "categoria": "Particular",
+      "tem_opcoes": true,
+      "opcoes": [
+        {
+          "lab_convenio_id": 24,
+          "nome": "OITAVA ROSADO MOSSORO",
+          "forma_pagamento": "DINHEIRO",
+          "particular": true,
+          "pix": false,
+          "cartao": false,
+          "cartao_desconto": false,
+          "socio": true
+        },
+        {
+          "lab_convenio_id": 1665,
+          "nome": "PIX MOSSORO",
+          "forma_pagamento": "PIX",
+          "particular": false,
+          "pix": true,
+          "cartao": false,
+          "cartao_desconto": false,
+          "socio": false
+        },
+        {
+          "lab_convenio_id": 1613,
+          "nome": "CARTAO CREDITO MOSSORO",
+          "forma_pagamento": "CARTAO",
+          "particular": true,
+          "pix": false,
+          "cartao": true,
+          "cartao_desconto": false,
+          "socio": false
+        },
+        {
+          "lab_convenio_id": 1614,
+          "nome": "CARTAO DEBITO MOSSORO",
+          "forma_pagamento": "CARTAO",
+          "particular": true,
+          "pix": false,
+          "cartao": true,
+          "cartao_desconto": false,
+          "socio": false
+        },
+        {
+          "lab_convenio_id": 1615,
+          "nome": "CARTAO PARCELADO MOSSORO",
+          "forma_pagamento": "CARTAO",
+          "particular": true,
+          "pix": false,
+          "cartao": true,
+          "cartao_desconto": false,
+          "socio": false
+        }
+      ]
+    },
+    {
+      "categoria_id": 16,
+      "categoria": "Cartao de Desconto",
+      "tem_opcoes": true,
+      "opcoes": [
+        {
+          "lab_convenio_id": 2118,
+          "nome": "CARTAO DE DESCONTO MOSSORO",
+          "forma_pagamento": "CARTAO_DESCONTO",
+          "particular": false,
+          "pix": false,
+          "cartao": false,
+          "cartao_desconto": true,
+          "socio": true
+        },
+        {
+          "lab_convenio_id": 2406,
+          "nome": "PIX CARTAO DE DESCONTO",
+          "forma_pagamento": "PIX",
+          "particular": false,
+          "pix": true,
+          "cartao": false,
+          "cartao_desconto": true,
+          "socio": false
+        }
+      ]
+    },
+    {
+      "categoria_id": 27,
+      "categoria": "Exercito",
+      "tem_opcoes": false,
+      "opcoes": []
+    }
+  ]
+}
+```
+
+**Valores do campo `forma_pagamento`:**
+
+| Valor | Descricao |
+|-------|-----------|
+| DINHEIRO | Pagamento em dinheiro |
+| PIX | Pagamento via PIX |
+| CARTAO | Cartao de credito, debito ou parcelado |
+| CARTAO_DESCONTO | Cartao de desconto (com ou sem cartao) |
+| SOCIO | Socio/conveniado |
+
+**Exemplo de precos para RM CRANIO SEM CONTRASTE (Mossoro):**
+
+| Categoria | Forma | lab_convenio_id | Valor |
+|-----------|-------|-----------------|-------|
+| Particular | Dinheiro | 24 | R$ 650,00 |
+| Particular | PIX | 1665 | R$ 650,00 |
+| Particular | Cartao Credito | 1613 | R$ 760,50 |
+| Particular | Cartao Debito | 1614 | R$ 760,50 |
+| Particular | Cartao Parcelado | 1615 | R$ 760,50 |
+| Cartao Desconto | Dinheiro | 2118 | R$ 500,00 |
+| Cartao Desconto | PIX | 2406 | R$ 500,00 |
+| Cartao Desconto | Credito | 2403 | R$ 585,00 |
+| Cartao Desconto | Debito | 2404 | R$ 585,00 |
+| Cartao Desconto | Parcelado | 2405 | R$ 585,00 |
+
+---
+
+#### Consultar Precos
+
+Usa o `lab_convenio_id` retornado pelo `buscar_convenios_agenda.php` para consultar o preco correto do exame.
+
+```http
+GET /consultar_precos.php?convenio_id={lab_convenio_id}
+Authorization: Bearer {token}
+```
+
+| Parametro | Tipo | Obrigatorio | Descricao |
+|-----------|------|-------------|-----------|
+| convenio_id | integer | Sim | ID do LAB_CONVENIO (retornado por buscar_convenios_agenda) |
+| busca | string | Nao | Busca por nome do exame |
+| exame_id | integer | Nao | ID do exame |
+| procedimento_id | integer | Nao | ID do procedimento |
+
+**Exemplo - PIX Mossoro:**
+```bash
+GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO SEM
+```
+
+**Resposta:**
+```json
+{
+  "status": "sucesso",
+  "total": 1,
+  "resultados": [
+    {
+      "exame_id": 1234,
+      "nome_exame": "RM CRANIO SEM CONTRASTE",
+      "valor_unitario": 650.00,
+      "convenio_id": 1665,
+      "convenio_nome": "PIX MOSSORO"
     }
   ]
 }
@@ -923,11 +1088,23 @@ O sistema controla vagas por **dia da semana**, nao por data:
 6. POST /processar_agendamento.php  (com exames_ids=31,32)
 ```
 
-### Fluxo 3: Consulta de Precos
+### Fluxo 3: Consulta de Precos (Particular/Cartao de Desconto)
+
+O preco varia conforme a forma de pagamento. Usar `buscar_convenios_agenda.php` para obter o `lab_convenio_id` correto.
 
 ```
-1. GET /buscar_convenios.php?busca=amil
-2. GET /consultar_precos.php?especialidade_id=1&convenio_id=24
+1. GET /buscar_convenios_agenda.php?agenda_id=84
+   -> Retorna categorias: Particular (tem_opcoes: true), Cartao de Desconto (tem_opcoes: true)
+   -> Particular tem: Dinheiro (id=24), PIX (id=1665), Credito (id=1613), Debito (id=1614), Parcelado (id=1615)
+
+2. Bot pergunta: "Particular ou Cartao de Desconto?"
+   -> Paciente: "Particular"
+
+3. Bot pergunta: "Dinheiro, PIX, Credito, Debito ou Parcelado?"
+   -> Paciente: "PIX" -> lab_convenio_id = 1665
+
+4. GET /consultar_precos.php?convenio_id=1665&busca=RM CRANIO
+   -> Retorna: R$ 650,00
 ```
 
 ### Fluxo 4: Cancelamento
@@ -935,6 +1112,15 @@ O sistema controla vagas por **dia da semana**, nao por data:
 ```
 1. GET /consultar_agendamentos_paciente.php?cpf=123.456.789-01
 2. POST /cancelar_agendamento.php  (agendamento_id + motivo)
+```
+
+### Fluxo 5: Busca de Paciente por CPF
+
+```
+1. POST /buscar_paciente.php  (termo=08635709411)
+   -> Busca CPF com ou sem formatacao
+   -> Retorna paciente com id, nome, cpf, telefone, data_nascimento
+2. Usar paciente_id no agendamento com usar_paciente_existente=true
 ```
 
 ---
@@ -979,5 +1165,5 @@ O sistema controla vagas por **dia da semana**, nao por data:
 
 ---
 
-**Versao:** 3.0
-**Ultima atualizacao:** Fevereiro 2026
+**Versao:** 3.1
+**Ultima atualizacao:** 19 Fevereiro 2026
